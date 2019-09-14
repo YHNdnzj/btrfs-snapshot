@@ -11,7 +11,7 @@ else
 fi
 [[ -f $dest ]] && rm "$dest"
 [[ ! -e $dest ]] && mkdir -p "$dest"
-num=$(( $(ls "$dest" | wc -l) - 9 ))
-mapfile -t snapshot < <(ls -dr "$dest"/* | tail -n $num)
-(( num > 0 )) && btrfs subvolume delete "${snapshot[@]}"
+_num=$(( $(ls "$dest" | wc -l) - 9 ))
+mapfile -t snapshot < <(ls -dr "$dest"/* | tail -n $_num)
+(( _num > 0 )) && btrfs subvolume delete "${snapshot[@]}"
 btrfs subvolume snapshot "$subvol" "$dest/$date"

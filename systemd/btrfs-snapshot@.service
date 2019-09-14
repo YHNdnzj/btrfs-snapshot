@@ -1,0 +1,8 @@
+[Unit]
+Description=Btrfs snapshot on %f
+
+[Service]
+Nice=19
+IOSchedulingClass=idle
+KillSignal=SIGINT
+ExecStart=/usr/local/bin/btrfs-snapshot %f

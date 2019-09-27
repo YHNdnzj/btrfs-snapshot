@@ -15,4 +15,4 @@ fi
 _num=$(( $(ls "$dest" | wc -l) - num + 1 ))
 mapfile -t snapshot < <(ls -d "$dest"/* | head -n $_num)
 (( _num > 0 )) && btrfs subvolume delete "${snapshot[@]}"
-btrfs subvolume snapshot "$subvol" "$dest/$date"
+btrfs subvolume snapshot "$subvol" "$dest"/"$date"

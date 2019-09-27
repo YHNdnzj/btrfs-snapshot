@@ -1,6 +1,6 @@
 #!/bin/bash
-subvol="$1"
 num=10
+subvol="$1"
 date="$(date -I)"
 if [[ $subvol == / ]]; then
 	dest=/snapshot/root

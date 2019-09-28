@@ -4,7 +4,7 @@
 #
 
 _f_parseopts=parseopts
-_i_date="$(date -I)"
+_i_date=$(date -I)
 
 usage() {
     cat <<EOF
@@ -45,11 +45,11 @@ while :; do
     case $1 in
         -s|--subvolume)
             shift
-            subvol="$1"
+            subvol=$1
             ;;
         -n|--nkeep)
             shift
-            _i_nkeep="$1"
+            _i_nkeep=$1
             ;;
         -h|--help)
             usage

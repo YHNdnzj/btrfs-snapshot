@@ -3,6 +3,8 @@
 # btrfs-snapshot - tool for creating btrfs snapshots
 #
 
+_f_parseopt=parseopt
+
 usage() {
     cat <<EOF
 usage: ${0##*/} [options]
@@ -33,6 +35,15 @@ delete_snap() {
     mapfile -t _snapshot < <(ls -d "$dest"/* | head -n $_n_del)
     (( _n_del > 0 )) && btrfs subvolume delete "${_snapshot[@]}"
 }
+
+. parseopt
+
+_opt_short='s:n:h'
+_opt_long=('subvolume:' 'nkeep:' 'help')
+
+parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
+set -- "${OPTRET[@]}"
+unset _opt_short _opt_long OPTRET
 
 while :; do
     case $1 in

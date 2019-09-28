@@ -5,4 +5,4 @@ unzip btrfs-snapshot.zip
 cd btrfs-snapshot-master || exit 1
 install -Dm755 btrfs-snapshot.sh /usr/local/bin/btrfs-snapshot
 install -Dt /etc/systemd/system -m644 systemd/*
-rm btrfs-snapshot.zip
+rm -rf btrfs-snapshot{.zip,-master}

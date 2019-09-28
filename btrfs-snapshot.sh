@@ -60,7 +60,7 @@ while :; do
             shift
             prefix=$1
             ;;
-        -h|--help|--)
+        --)
             usage
             exit 0
             ;;

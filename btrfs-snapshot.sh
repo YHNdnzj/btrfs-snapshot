@@ -26,10 +26,6 @@ set_var() {
 	fi
 }
 
-create_dest() {
-	mkdir -p "$dest"
-}
-
 create_snap() {
 	btrfs subvolume snapshot "$subvol" "$dest"/"$_date"
 }
@@ -59,7 +55,7 @@ while :; do
 done
 
 set_var
-create_dest
+mkdir -p "$dest"
 create_snap
 delete_snap
 

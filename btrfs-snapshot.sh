@@ -3,7 +3,7 @@
 # btrfs-snapshot - tool for creating btrfs snapshots
 #
 
-_f_parseopt=parseopt
+_f_parseopts=parseopts
 _i_date="$(date -I)"
 
 usage() {
@@ -32,7 +32,7 @@ delete_snap() {
     (( _i_ndel > 0 )) && btrfs subvolume delete "${_d_snapshot[@]}"
 }
 
-. "$_f_parseopt"
+. "$_f_parseopts"
 
 _opt_short='s:n:h'
 _opt_long=('subvolume:' 'nkeep:' 'help')

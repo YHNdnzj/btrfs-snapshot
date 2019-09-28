@@ -46,6 +46,8 @@ parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"
 unset _opt_short _opt_long OPTRET
 
+set_var
+
 while :; do
     case $1 in
         -s|--subvolume)
@@ -72,7 +74,6 @@ while :; do
     shift
 done
 
-set_var
 set_dest
 mkdir -p "$dest"
 btrfs subvolume snapshot "$subvol" "$dest/$_date"

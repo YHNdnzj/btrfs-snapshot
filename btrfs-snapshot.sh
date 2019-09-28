@@ -29,8 +29,9 @@ create_snap() {
 
 delete_snap() {
 	local _n_del=$(( $(ls "$dest" | wc -l) - _n_keep ))
-	mapfile -t snapshot < <(ls -d "$dest"/* | head -n $_n_del)
-	(( _n_del > 0 )) && btrfs subvolume delete "${snapshot[@]}"
+    local _snapshot=()
+	mapfile -t _snapshot < <(ls -d "$dest"/* | head -n $_n_del)
+	(( _n_del > 0 )) && btrfs subvolume delete "${_snapshot[@]}"
 }
 
 while :; do

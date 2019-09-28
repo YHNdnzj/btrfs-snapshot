@@ -15,7 +15,7 @@ EOF
 }
 
 set_var() {
-	date="$(date -I)"
+	_date="$(date -I)"
 	if [[ $subvol == / ]]; then
 		dest=/snapshot/root
 	elif [[ $subvol ]]; then
@@ -32,13 +32,13 @@ create_dest() {
 }
 
 create_snap() {
-	btrfs subvolume snapshot "$subvol" "$dest"/"$date"
+	btrfs subvolume snapshot "$subvol" "$dest"/"$_date"
 }
 
 delete_snap() {
-	local _num=$(( $(ls "$dest" | wc -l) - nkeep ))
-	mapfile -t snapshot < <(ls -d "$dest"/* | head -n $_num)
-	(( _num > 0 )) && btrfs subvolume delete "${snapshot[@]}"
+	local _n_del=$(( $(ls "$dest" | wc -l) - _n_keep ))
+	mapfile -t snapshot < <(ls -d "$dest"/* | head -n $_n_del)
+	(( _n_del > 0 )) && btrfs subvolume delete "${snapshot[@]}"
 }
 
 while :; do
@@ -49,7 +49,7 @@ while :; do
 			;;
 		-n|--nkeep)
 			shift
-			nkeep=$1
+			_n_keep=$1
 			;;
         -h|--help)
             usage

@@ -20,7 +20,7 @@ EOF
 set_dest() {
     if [[ $subvol == / ]]; then
         dest=/snapshot/root
-	else
+    else
         dest=/snapshot$subvol
     fi
 }

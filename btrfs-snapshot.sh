@@ -39,8 +39,8 @@ delete_snap() {
 
 . "$_f_parseopts"
 
-_opt_short='s:n:h'
-_opt_long=('subvolume:' 'nkeep:' 'help')
+_opt_short='s:n:p:h'
+_opt_long=('subvolume:' 'nkeep:' 'prefix:' 'help')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"

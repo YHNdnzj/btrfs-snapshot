@@ -49,7 +49,7 @@ while :; do
             ;;
         -n|--nkeep)
             shift
-            _i_nkeep=$1
+            _i_nkeep="$1"
             ;;
         -h|--help)
             usage
@@ -62,6 +62,6 @@ done
 set_dest
 mkdir -p "$dest"
 btrfs subvolume snapshot "$subvol" "$dest"/"$_i_date"
-delete_snap
+[[ $_i_nkeep ]] && delete_snap
 
 # vim: set ft=sh ts=4 sw=4 et:

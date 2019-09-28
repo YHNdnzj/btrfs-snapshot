@@ -18,11 +18,8 @@ set_var() {
 	_date="$(date -I)"
 	if [[ $subvol == / ]]; then
 		dest=/snapshot/root
-	elif [[ $subvol ]]; then
-		dest=/snapshot$subvol
 	else
-		echo "No source given, exiting…"
-		exit 1
+		dest=/snapshot$subvol
 	fi
 }
 

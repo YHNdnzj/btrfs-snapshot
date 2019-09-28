@@ -28,11 +28,11 @@ set_dest() {
 delete_snap() {
     local _i_ndel=$(( $(ls "$dest" | wc -l) - _i_nkeep ))
     local _d_snapshot=()
-    mapfile -t _d_snapshot < <(ls -d "$dest"/* | head -n $_i_ndel)
+    mapfile -t _d_snapshot < <(ls -d "$dest"/* | head -n "$_i_ndel")
     (( _i_ndel > 0 )) && btrfs subvolume delete "${_d_snapshot[@]}"
 }
 
-. $_f_parseopt
+. "$_f_parseopt"
 
 _opt_short='s:n:h'
 _opt_long=('subvolume:' 'nkeep:' 'help')
@@ -61,7 +61,7 @@ done
 
 set_dest
 mkdir -p "$dest"
-btrfs subvolume snapshot "$subvol" "$dest"/"$_i_date"
+btrfs subvolume snapshot "$subvol" "$dest/$_i_date"
 [[ $_i_nkeep ]] && delete_snap
 
 # vim: set ft=sh ts=4 sw=4 et:

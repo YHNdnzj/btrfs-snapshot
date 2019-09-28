@@ -9,7 +9,7 @@ usage: ${0##*/} [options]
 
   Options:
    -s, --subvolume <subvolume>      Subvolume for creating snapshots
-   -n, --nkeep <number>             Number of snapshots to be kept
+   -n, --nkeep <number>             Number of snapshots to keep
 
 EOF
 }

@@ -27,8 +27,7 @@ set_var() {
 }
 
 create_dest() {
-	[[ -f $dest ]] && rm "$dest"
-	[[ ! -e $dest ]] && mkdir -p "$dest"
+	mkdir -p "$dest"
 }
 
 create_snap() {

@@ -32,9 +32,11 @@ set_dest() {
 
 delete_snap() {
     local _ndel=$(( $(ls "$dest" | wc -l) - nkeep ))
-    local _snapshot=()
-    mapfile -t _snapshot < <(ls -d "$dest"/* | head -n $_ndel)
-    (( _ndel > 0 )) && btrfs subvolume delete "${_snapshot[@]}"
+    (( _ndel > 0 )) && {
+        local _snapshot=()
+        mapfile -t _snapshot < <(ls -d "$dest"/* | head -n $_ndel)
+        btrfs subvolume delete "${_snapshot[@]}"
+    }
 }
 
 . "$_f_parseopts"

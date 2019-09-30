@@ -27,8 +27,11 @@ set_var() {
 set_dest() {
     if [[ $subvol = / ]]; then
         dest=$prefix/root
-    else
+    elif [[ $subvol ]]; then
         dest=$prefix/$subvol
+    else
+        echo "Invalid command -- subvolume must be set"
+        exit 1
     fi
     mkdir -p "$dest"
 }

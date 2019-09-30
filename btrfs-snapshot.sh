@@ -10,8 +10,8 @@ usage() {
 usage: ${0##*/} [options]
 
   Options:
-   -s, --subvolume <subvolume>      Subvolume for creating snapshots (default: /)
-   -n, --nkeep <number>             Number of snapshots to keep (default: 0)
+   -s, --subvolume <subvolume>      Subvolume for creating snapshots
+   -n, --nkeep <number>             Number of snapshots to keep
    -p, --prefix <prefix>            Prefix of snapshot dir (default: /snapshot)
 
 EOF
@@ -19,7 +19,6 @@ EOF
 
 set_var() {
     prefix=/snapshot
-    subvol=/
     _date=$(date -I)
 }
 

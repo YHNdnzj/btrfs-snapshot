@@ -11,7 +11,7 @@ usage: ${0##*/} [options]
 
   Options:
    -s, --subvolume <subvolume>      Subvolume for creating snapshots (default: /)
-   -n, --nkeep <number>             Number of snapshots to keep (default: ∞)
+   -n, --nkeep <number>             Number of snapshots to keep (default: 0)
    -p, --prefix <prefix>            Prefix of snapshot dir (default: /snapshot)
 
 EOF

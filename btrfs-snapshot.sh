@@ -10,9 +10,11 @@ usage() {
 usage: ${0##*/} [options]
 
   Options:
-   -s, --subvolume <subvolume>      Subvolume for creating snapshots
+   -s, --subvolume <subvolume>      Subvolume for creating snapshot
+   -r, --readonly                   Create a readonly snapshot
    -n, --nkeep <number>             Number of snapshots to keep
    -p, --prefix <prefix>            Prefix of snapshot dir (default: /snapshot)
+   -h, --help                       Display this message and exit
 
 EOF
 }
@@ -23,10 +25,19 @@ set_var() {
 }
 
 set_dest() {
-    if [[ $subvol == / ]]; then
+    if [[ $subvol = / ]]; then
         dest=$prefix/root
     else
         dest=$prefix/$subvol
+    fi
+    mkdir -p "$dest"
+}
+
+create_snap() {
+    if [[ $ro = true ]]; then
+        btrfs subvolume snapshot -r "$subvol" "$dest/$_date"
+    else
+        btrfs subvolume snapshot "$subvol" "$dest/$_date"
     fi
 }
 
@@ -41,8 +52,8 @@ delete_snap() {
 
 . "$_f_parseopts"
 
-_opt_short='s:n:p:h'
-_opt_long=('subvolume:' 'nkeep:' 'prefix:' 'help')
+_opt_short='s:rn:p:h'
+_opt_long=('subvolume:' 'readonly' 'nkeep:' 'prefix:' 'help')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"
@@ -55,6 +66,9 @@ while :; do
         -s|--subvolume)
             shift
             subvol=$1
+            ;;
+        -r|--readonly)
+            ro=true
             ;;
         -n|--nkeep)
             shift
@@ -77,8 +91,7 @@ while :; do
 done
 
 set_dest
-mkdir -p "$dest"
-btrfs subvolume snapshot "$subvol" "$dest/$_date"
+create_snap
 [[ $nkeep ]] && delete_snap
 
 # vim: set ft=sh ts=4 sw=4 et:

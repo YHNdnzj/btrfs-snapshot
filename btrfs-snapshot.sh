@@ -86,8 +86,8 @@ while :; do
             exit 0
             ;;
         --)
-            usage
-            exit 1
+            shift
+            break 2
             ;;
     esac
     shift

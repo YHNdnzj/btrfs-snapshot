@@ -10,10 +10,10 @@ usage() {
 usage: ${0##*/} [options]
 
   Options:
-   -s, --subvolume <subvolume>      Subvolume for creating snapshot
-   -r, --readonly                   Create a readonly snapshot
-   -n, --nkeep <number>             Limit number of snapshots to keep
-   -p, --prefix <prefix>            Prefix of snapshot dir (default: /snapshot)
+   -s, --subvolume <subvolume>      Set subvolume for creating snapshot (default: /)
+   -r, --readonly                   Create a readonly snapshot (default: no)
+   -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
+   -p, --prefix <prefix>            Set prefix of snapshot dir (default: /snapshot)
    -h, --help                       Display this message and exit
 
 EOF
@@ -21,17 +21,15 @@ EOF
 
 set_var() {
     prefix=/snapshot
+    subvol=/
     _date=$(date -I)
 }
 
 set_dest() {
     if [[ $subvol = / ]]; then
         dest=$prefix/root
-    elif [[ $subvol ]]; then
-        dest=$prefix/$subvol
     else
-        echo "Invalid command -- subvolume must be set"
-        exit 1
+        dest=$prefix/$subvol
     fi
     mkdir -p "$dest"
 }

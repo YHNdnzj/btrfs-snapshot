@@ -12,7 +12,7 @@ usage: ${0##*/} [options]
   Options:
    -s, --subvolume <subvolume>      Subvolume for creating snapshot
    -r, --readonly                   Create a readonly snapshot
-   -n, --nkeep <number>             Number of snapshots to keep
+   -n, --nkeep <number>             Limit number of snapshots to keep
    -p, --prefix <prefix>            Prefix of snapshot dir (default: /snapshot)
    -h, --help                       Display this message and exit
 

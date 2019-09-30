@@ -94,5 +94,6 @@ done
 set_dest
 create_snap
 [[ $nkeep ]] && delete_snap
+exit 0
 
 # vim: set ft=sh ts=4 sw=4 et:

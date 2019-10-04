@@ -3,7 +3,7 @@
 # btrfs-snapshot - tool for creating btrfs snapshots
 #
 
-declare -r version=%VERSION%
+declare -r version=VERSION
 
 _f_parseopts=parseopts
 

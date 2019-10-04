@@ -3,10 +3,13 @@
 # btrfs-snapshot - tool for creating btrfs snapshots
 #
 
+declare -r version=%VERSION%
+
 _f_parseopts=parseopts
 
 usage() {
     cat <<EOF
+btrfs-snapshot $version
 usage: ${0##*/} [options]
 
   Options:
@@ -15,7 +18,14 @@ usage: ${0##*/} [options]
    -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
    -p, --prefix <prefix>            Set prefix of snapshot dir (default: /snapshot)
    -h, --help                       Display this message and exit
+   -v, --version                    Display version information and exit
 
+EOF
+}
+
+version() {
+    cat <<EOF
+btrfs-snapshot $version
 EOF
 }
 
@@ -53,8 +63,8 @@ delete_snap() {
 
 . "$_f_parseopts"
 
-_opt_short='s:rn:p:h'
-_opt_long=('subvolume:' 'readonly' 'nkeep:' 'prefix:' 'help')
+_opt_short='s:rn:p:hv'
+_opt_long=('subvolume:' 'readonly' 'nkeep:' 'prefix:' 'help' 'version')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"
@@ -81,6 +91,10 @@ while :; do
             ;;
         -h|--help)
             usage
+            exit 0
+            ;;
+        -v|--version)
+            version
             exit 0
             ;;
         --)

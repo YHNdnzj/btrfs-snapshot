@@ -35,20 +35,25 @@ set_var() {
     _date=$(date -I)
 }
 
-set_dest() {
+set_and_check_snap() {
     if [[ $subvol = / ]]; then
         dest=$prefix/root
     else
         dest=$prefix/$subvol
     fi
     mkdir -p "$dest"
+    snapshot=$dest/$_date
+    if [[ -d $snapshot ]]; then
+        echo "${0##*/}: invalid command -- snapshot already exists"
+        exit 1
+    fi
 }
 
 create_snap() {
     if [[ $ro = true ]]; then
-        btrfs subvolume snapshot -r "$subvol" "$dest/$_date"
+        btrfs subvolume snapshot -r "$subvol" "$snapshot"
     else
-        btrfs subvolume snapshot "$subvol" "$dest/$_date"
+        btrfs subvolume snapshot "$subvol" "$snapshot"
     fi
 }
 
@@ -108,7 +113,7 @@ while :; do
     shift
 done
 
-set_dest
+set_and_check_snap
 create_snap
 
 if [[ $nkeep ]]; then

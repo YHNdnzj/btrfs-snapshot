@@ -63,6 +63,9 @@ delete_snap() {
 
 . "$_f_parseopts"
 
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
 _opt_short='s:rn:p:hv'
 _opt_long=('subvolume:' 'readonly' 'nkeep:' 'prefix:' 'help' 'version')
 
@@ -112,6 +115,6 @@ if [[ $nkeep ]]; then
     delete_snap
 fi
 
-exit 0
+exit
 
 # vim: set ft=sh ts=4 sw=4 et:

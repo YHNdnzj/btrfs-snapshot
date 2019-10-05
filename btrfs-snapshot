@@ -18,7 +18,7 @@ usage: ${0##*/} [options]
    -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
    -p, --prefix <prefix>            Set prefix of snapshot dir (default: /snapshot)
    -h, --help                       Display this message and exit
-   -v, --version                    Display version information and exit
+   -V, --version                    Display version information and exit
 
 EOF
 }
@@ -71,7 +71,7 @@ delete_snap() {
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-_opt_short='s:rn:p:hv'
+_opt_short='s:rn:p:hV'
 _opt_long=('subvolume:' 'readonly' 'nkeep:' 'prefix:' 'help' 'version')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
@@ -101,7 +101,7 @@ while :; do
             usage
             exit 0
             ;;
-        -v|--version)
+        -V|--version)
             version
             exit 0
             ;;

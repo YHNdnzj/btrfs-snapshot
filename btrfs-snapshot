@@ -91,7 +91,7 @@ while :; do
             ;;
         -n|--nkeep)
             shift
-            nkeep=$1
+            declare -i nkeep=$1
             ;;
         -p|--prefix)
             shift

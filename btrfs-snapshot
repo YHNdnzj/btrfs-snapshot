@@ -39,7 +39,7 @@ set_and_check_snap() {
     if [[ $subvol = / ]]; then
         dest=$prefix/root
     else
-        dest=$prefix/$subvol
+        dest=$prefix$subvol
     fi
     mkdir -p "$dest"
     snapshot=$dest/$_date

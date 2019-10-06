@@ -1,0 +1,45 @@
+# Maintainer: Mike Yuan <me@yhndnzj.com>
+
+pkgname=btrfs-snapshot-git
+pkgver=2.0.0.r8.g5f59ff5
+pkgrel=1
+pkgdesc="Tool for creating btrfs snapshots"
+arch=('any')
+url="https://github.com/YHNdnzj/btrfs-snapshot"
+license=('MIT')
+depends=('bash' 'btrfs-progs')
+makedepends=('git')
+provides=('btrfs-snapshot')
+conflicts=('btrfs-snapshot')
+source=(
+    "btrfs-snapshot"
+    "parseopts"
+    "README.md"
+    "LICENSE"
+)
+sha256sums=('19e7f335ba4a31b4914d05319fee2e113def581424056b5085623ec3bf3cf9c5'
+            'd1b60e1ae87db97322594413c157f723b155e0ee600ba194221b6e0455f8bf11'
+            '2b53ba7a2b208596907f4f32e31e0c089a5ba8716947064d36e795584faeded4'
+            '6e227f3c8aecc4e91e406233ea22fc3733e2b39595aded92279858925ed5c1ad')
+
+pkgver() {
+    git describe --long | sed -r 's/([^-]*-g)/r\1/;s/-/./g'
+}
+
+package() {
+    sed -e 's|\(^_f_parseopts\)=.*|\1=/usr/lib/btrfs-snapshot-po|' \
+        -e 's|\(^_d_config\)=.*|\1=/etc/btrfs-snapshot|' \
+        -e "s|VERSION|${pkgver}|g" \
+        -i btrfs-snapshot
+
+    install -dm755 "${pkgdir}"/etc/btrfs-snapshot
+    install -Dm755 btrfs-snapshot "${pkgdir}"/usr/bin/btrfs-snapshot
+    install -Dm644 parseopts "${pkgdir}"/usr/lib/btrfs-snapshot-po
+
+    install -Dt "${pkgdir}"/usr/lib/systemd/system -m644 systemd/btrfs-snapshot@.{service,timer}
+
+    install -Dm644 README.md "${pkgdir}"/usr/share/doc/btrfs-snapshot/README.md
+    install -Dm644 LICENSE "${pkgdir}"/usr/share/licenses/btrfs-snapshot/LICENSE
+}
+
+# vim: set ts=4 sw=4 et:

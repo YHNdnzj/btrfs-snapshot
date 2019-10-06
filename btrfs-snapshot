@@ -14,13 +14,11 @@ btrfs-snapshot $version
 usage: $filename [options]
 
   Options:
-   -c,--config <config>             Use alternate config file (default: /etc/btrfs-snapshot.conf)
+   -c, --config <config>            Use alternate config file (default: /etc/btrfs-snapshot.conf)
    -h, --help                       Display this message and exit
    -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
    -V, --version                    Display version information and exit
-   -p, --prefix <prefix>            Set prefix of snapshot dir (default: \$toplevel/snapshot)
-   -s, --subvolume <subvolume>      Set subvolume for creating snapshot (default: /root)
-   -t, --toplevel <mountpoint>      Set mountpoint of btrfs toplevel (default: /toplevel)
+   -s, --subvolume <subvolume>      Set subvolume for creating snapshot
    -w, --writable                   Create a writable snapshot (default: no)
 
 EOF
@@ -93,8 +91,8 @@ delete_snap() {
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-_opt_short='s:t:n:p:whV'
-_opt_long=('subvolume:' 'toplevel:' 'nkeep:' 'prefix:' 'writable' 'help' 'version')
+_opt_short='c:hn:Vp:s:t:w'
+_opt_long=('config:' 'help' 'nkeep:' 'version' '' '')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"

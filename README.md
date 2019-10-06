@@ -15,7 +15,7 @@ Tool for creating btrfs snapshots
 #### Daily create snapshots
 
 ```
-$ systemd-escape -p /path/to/mountpoint
+$ systemd-escape -p /path/to/subvolume
 # systemctl enable --now btrfs-snapshot@escaped-path.timer
 ```
 

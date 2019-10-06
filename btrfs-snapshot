@@ -3,8 +3,7 @@
 # btrfs-snapshot - tool for creating btrfs snapshots
 #
 
-exename=${0##*/}
-declare -r version=VERSION
+declare -r exename=${0##*/} version=VERSION
 
 _f_parseopts=parseopts
 
@@ -17,7 +16,7 @@ usage: $exename [options]
    -s, --subvolume <subvolume>      Set subvolume for creating snapshot (default: /root)
    -t, --toplevel <mountpoint>      Set mountpoint of btrfs toplevel (default: /toplevel)
    -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
-   -p, --prefix <prefix>            Set prefix of snapshot dir (default: /snapshot)
+   -p, --prefix <prefix>            Set prefix of snapshot dir (default: \$toplevel/snapshot)
    -w, --writable                   Create a writable snapshot (default: no)
    -h, --help                       Display this message and exit
    -V, --version                    Display version information and exit
@@ -32,9 +31,9 @@ EOF
 }
 
 set_default() {
-    prefix=/snapshot
-    subvol=/root
     toplevel=/toplevel
+    subvol=/root
+    prefix=$toplevel/snapshot
 }
 
 set_and_check_source() {
@@ -56,9 +55,7 @@ set_and_check_snap() {
         dest=$prefix$subvol
     fi
     mkdir -p "$dest"
-    local _date
-    _date=$(date -I)
-    snapshot=$dest/$_date
+    snapshot=$dest/$(date -I)
     if [[ -d $snapshot ]]; then
         echo "$exename: invalid command -- snapshot already exists"
         exit 1

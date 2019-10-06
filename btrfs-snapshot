@@ -13,7 +13,7 @@ btrfs-snapshot $version
 usage: ${0##*/} [options]
 
   Options:
-   -s, --subvolume <subvolume>      Set subvolume for creating snapshot (default: /)
+   -s, --subvolume <subvolume>      Set subvolume for creating snapshot (default: /root)
    -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
    -p, --prefix <prefix>            Set prefix of snapshot dir (default: /snapshot)
    -w, --writable                   Create a writable snapshot (default: no)
@@ -31,12 +31,12 @@ EOF
 
 set_default() {
     prefix=/snapshot
-    subvol=/
+    subvol=/root
 }
 
 set_and_check_snap() {
     if [[ $subvol = / ]]; then
-        dest=$prefix/root
+        dest=$prefix/toplevel
     else
         dest=$prefix$subvol
     fi

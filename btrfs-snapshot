@@ -14,6 +14,7 @@ usage: ${0##*/} [options]
 
   Options:
    -s, --subvolume <subvolume>      Set subvolume for creating snapshot (default: /root)
+   -t, --toplevel <mountpoint>      Set mountpoint of btrfs toplevel (default: /toplevel)
    -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
    -p, --prefix <prefix>            Set prefix of snapshot dir (default: /snapshot)
    -w, --writable                   Create a writable snapshot (default: no)
@@ -32,6 +33,19 @@ EOF
 set_default() {
     prefix=/snapshot
     subvol=/root
+    toplevel=/toplevel
+}
+
+set_and_check_source() {
+    source=$toplevel$subvol
+    local _errmsg
+    _errmsg="${0##*/}: invalid toplevel or subvolume -- source '$source'"
+    if [[ ! -e $source ]]; then
+        echo "$_errmsg" "does not exist"
+        exit 1
+    elif [[ ! -d $source ]]; then
+        echo "$_errmsg" "is not a directory"
+    fi
 }
 
 set_and_check_snap() {
@@ -52,9 +66,9 @@ set_and_check_snap() {
 
 create_snap() {
     if [[ $rw = true ]]; then
-        btrfs subvolume snapshot "$subvol" "$snapshot"
+        btrfs subvolume snapshot "$source" "$snapshot"
     else
-        btrfs subvolume snapshot -r "$subvol" "$snapshot"
+        btrfs subvolume snapshot -r "$source" "$snapshot"
     fi
 }
 
@@ -72,8 +86,8 @@ delete_snap() {
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-_opt_short='s:n:p:whV'
-_opt_long=('subvolume:' 'nkeep:' 'prefix:' 'writable' 'help' 'version')
+_opt_short='s:t:n:p:whV'
+_opt_long=('subvolume:' 'toplevel:' 'nkeep:' 'prefix:' 'writable' 'help' 'version')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"
@@ -86,6 +100,10 @@ while :; do
         -s|--subvolume)
             shift
             subvol=$1
+            ;;
+        -t|--toplevel)
+            shift
+            toplevel=$1
             ;;
         -n|--nkeep)
             shift
@@ -114,6 +132,7 @@ while :; do
     shift
 done
 
+set_and_check_source
 set_and_check_snap
 create_snap
 

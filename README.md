@@ -2,8 +2,6 @@
 
 Tool for creating btrfs snapshots
 
-[AUR](https://aur.archlinux.org/packages/btrfs-snapshot) [AUR-Git](https://aur.archlinux.org/packages/btrfs-snapshot-git)
-
 ### Installation
 
 `$ aur_helper -S btrfs-snapshot`

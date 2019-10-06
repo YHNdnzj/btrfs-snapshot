@@ -3,14 +3,14 @@
 # btrfs-snapshot - tool for creating btrfs snapshots
 #
 
-declare -r exename=${0##*/} version=VERSION
+declare -r filename=${0##*/} version=VERSION
 
 _f_parseopts=parseopts
 
 usage() {
     cat <<EOF
 btrfs-snapshot $version
-usage: $exename [options]
+usage: $filename [options]
 
   Options:
    -s, --subvolume <subvolume>      Set subvolume for creating snapshot (default: /root)
@@ -39,7 +39,7 @@ set_default() {
 set_and_check_source() {
     source=$toplevel$subvol
     local _errmsg
-    _errmsg="$exename: invalid toplevel or subvolume -- source '$source'"
+    _errmsg="$filename: invalid toplevel or subvolume -- source '$source'"
     if [[ ! -e $source ]]; then
         echo "$_errmsg" "does not exist"
         exit 1
@@ -57,7 +57,7 @@ set_and_check_snap() {
     mkdir -p "$dest"
     snapshot=$dest/$(date -I)
     if [[ -d $snapshot ]]; then
-        echo "$exename: invalid command -- snapshot already exists"
+        echo "$filename: invalid command -- snapshot already exists"
         exit 1
     fi
 }

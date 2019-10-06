@@ -6,6 +6,7 @@
 declare -r filename=${0##*/} version=VERSION
 
 _f_parseopts=parseopts
+_f_config=btrfs-snapshot.conf
 
 usage() {
     cat <<EOF
@@ -13,13 +14,14 @@ btrfs-snapshot $version
 usage: $filename [options]
 
   Options:
+   -c,--config <config>             Use alternate config file (default: /etc/btrfs-snapshot.conf)
+   -h, --help                       Display this message and exit
+   -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
+   -V, --version                    Display version information and exit
+   -p, --prefix <prefix>            Set prefix of snapshot dir (default: \$toplevel/snapshot)
    -s, --subvolume <subvolume>      Set subvolume for creating snapshot (default: /root)
    -t, --toplevel <mountpoint>      Set mountpoint of btrfs toplevel (default: /toplevel)
-   -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
-   -p, --prefix <prefix>            Set prefix of snapshot dir (default: \$toplevel/snapshot)
    -w, --writable                   Create a writable snapshot (default: no)
-   -h, --help                       Display this message and exit
-   -V, --version                    Display version information and exit
 
 EOF
 }
@@ -34,6 +36,13 @@ set_default() {
     toplevel=/toplevel
     subvol=/root
     prefix=$toplevel/snapshot
+}
+
+read_config() {
+    if ! . "$_f_config"; then
+        echo "$filename: failed to read configuration \`$_f_config'"
+        exit 1
+    fi
 }
 
 set_and_check_source() {
@@ -130,10 +139,11 @@ while :; do
     shift
 done
 
+read_config
 set_and_check_source
 set_and_check_snap
-create_snap
 
+create_snap
 if [[ $nkeep ]]; then
     delete_snap
 fi

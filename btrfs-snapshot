@@ -6,7 +6,7 @@
 declare -r filename=${0##*/} version=VERSION
 
 _f_parseopts=parseopts
-_f_config=btrfs-snapshot.conf
+_d_config=btrfs-snapshot
 
 usage() {
     cat <<EOF
@@ -14,13 +14,12 @@ btrfs-snapshot $version
 usage: $filename [options]
 
   Options:
-   -c,--config <config>             Use alternate config file (default: /etc/btrfs-snapshot.conf)
+   -c, --confdir                    Use config files in \`$_d_config'
+   -d, --dest <path>                Destination for snapshot
    -h, --help                       Display this message and exit
    -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
    -V, --version                    Display version information and exit
-   -p, --prefix <prefix>            Set prefix of snapshot dir (default: \$toplevel/snapshot)
-   -s, --subvolume <subvolume>      Set subvolume for creating snapshot (default: /root)
-   -t, --toplevel <mountpoint>      Set mountpoint of btrfs toplevel (default: /toplevel)
+   -s, --subvol <mountpoint>        Mountpoint for subvolume
    -w, --writable                   Create a writable snapshot (default: no)
 
 EOF
@@ -32,37 +31,7 @@ btrfs-snapshot $version
 EOF
 }
 
-set_default() {
-    toplevel=/toplevel
-    subvol=/root
-    prefix=$toplevel/snapshot
-}
-
-read_config() {
-    if ! . "$_f_config"; then
-        echo "$filename: failed to read configuration \`$_f_config'"
-        exit 1
-    fi
-}
-
-set_and_check_source() {
-    source=$toplevel$subvol
-    local _errmsg
-    _errmsg="$filename: invalid toplevel or subvolume -- source '$source'"
-    if [[ ! -e $source ]]; then
-        echo "$_errmsg" "does not exist"
-        exit 1
-    elif [[ ! -d $source ]]; then
-        echo "$_errmsg" "is not a directory"
-    fi
-}
-
-set_and_check_snap() {
-    if [[ $subvol = / ]]; then
-        dest=$prefix/toplevel
-    else
-        dest=$prefix$subvol
-    fi
+snapshot() {
     mkdir -p "$dest"
     snapshot=$dest/$(date -I)
     if [[ -d $snapshot ]]; then
@@ -71,15 +40,15 @@ set_and_check_snap() {
     fi
 }
 
-create_snap() {
-    if [[ $rw = true ]]; then
-        btrfs subvolume snapshot "$source" "$snapshot"
+create() {
+    if [[ $rw == true ]]; then
+        btrfs subvolume snapshot "$subvol" "$snapshot"
     else
-        btrfs subvolume snapshot -r "$source" "$snapshot"
+        btrfs subvolume snapshot -r "$subvol" "$snapshot"
     fi
 }
 
-delete_snap() {
+delete() {
     local _ndel=$(( $(ls "$dest" | wc -l) - nkeep ))
     (( _ndel > 0 )) && {
         local _snapshot=()
@@ -88,48 +57,53 @@ delete_snap() {
     }
 }
 
+main() {
+    snapshot
+    create
+    if [[ $nkeep ]]; then
+        delete
+    fi
+}
+
 . "$_f_parseopts"
 
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-_opt_short='s:t:n:p:whV'
-_opt_long=('subvolume:' 'toplevel:' 'nkeep:' 'prefix:' 'writable' 'help' 'version')
+_opt_short='cd:hn:Vs:w'
+_opt_long=('confdir' 'dest:' 'help' 'nkeep:' 'version' 'subvol:' 'writable')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"
 unset _opt_short _opt_long OPTRET
 
-set_default
-
 while :; do
     case $1 in
-        -s|--subvolume)
-            shift
-            subvol=$1
+        -c|--confdir)
+            confdir=true
             ;;
-        -t|--toplevel)
+        -d|--dest)
             shift
-            toplevel=$1
-            ;;
-        -n|--nkeep)
-            shift
-            declare -i nkeep=$1
-            ;;
-        -p|--prefix)
-            shift
-            prefix=$1
-            ;;
-        -w|--writable)
-            rw=true
+            dest=$1
             ;;
         -h|--help)
             usage
             exit 0
             ;;
+        -n|--nkeep)
+            shift
+            declare -i nkeep=$1
+            ;;
         -V|--version)
             version
             exit 0
+            ;;
+        -s|--subvol)
+            shift
+            subvol=$1
+            ;;
+        -w|--writable)
+            rw=true
             ;;
         --)
             shift
@@ -139,13 +113,14 @@ while :; do
     shift
 done
 
-read_config
-set_and_check_source
-set_and_check_snap
-
-create_snap
-if [[ $nkeep ]]; then
-    delete_snap
+if [[ $confdir == true ]]; then
+    for conf in "$_d_config"/*
+    do
+        . "$conf"
+        main
+    done
+else
+    main
 fi
 
 exit

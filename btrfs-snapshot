@@ -81,6 +81,8 @@ while :; do
     case $1 in
         -c|--confdir)
             confdir=true
+            shift
+            break 2
             ;;
         -d|--dest)
             shift

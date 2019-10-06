@@ -1,7 +1,7 @@
 # Maintainer: Mike Yuan <me@yhndnzj.com>
 
 pkgname=btrfs-snapshot-git
-pkgver=2.0.0.r11.g9a599db
+pkgver=2.0.0.r13.gd3dd377
 pkgrel=1
 pkgdesc="Tool for creating btrfs snapshots"
 arch=('any')
@@ -19,7 +19,7 @@ source=(
     "README.md"
     "LICENSE"
 )
-sha256sums=('19e7f335ba4a31b4914d05319fee2e113def581424056b5085623ec3bf3cf9c5'
+sha256sums=('60d498efd4e60031645b6db554b6eb940d3152f8e4f37a7d14bba1097d0a61c1'
             'd1b60e1ae87db97322594413c157f723b155e0ee600ba194221b6e0455f8bf11'
             '9d5509431316daff56b339c6342a0df4d86ada7d189a296d0402303b5681a48d'
             'c890846321841900b7e406058271ee81497edac1bd3e26b994dcae346c2b0139'
@@ -31,19 +31,21 @@ pkgver() {
 }
 
 package() {
-    sed -e 's|\(^_f_parseopts\)=.*|\1=/usr/lib/btrfs-snapshot-po|' \
-        -e 's|\(^_d_config\)=.*|\1=/etc/btrfs-snapshot|' \
-        -e "s|VERSION|${pkgver}|g" \
-        -i btrfs-snapshot
+    sed "s|\(^_f_parseopts\)=.*|\1=/usr/lib/btrfs-snapshot-po|
+         s|\(^_d_config\)=.*|\1=/etc/btrfs-snapshot|
+         s|%VERSION%|$pkgver|g" \
+         btrfs-snapshot | install -Dm755 /dev/stdin \
+         "$pkgdir/usr/bin/btrfs-snapshot"
 
-    install -dm755 "${pkgdir}"/etc/btrfs-snapshot
-    install -Dm755 btrfs-snapshot "${pkgdir}"/usr/bin/btrfs-snapshot
-    install -Dm644 parseopts "${pkgdir}"/usr/lib/btrfs-snapshot-po
+    install -Dm644 parseopts "$pkgdir/usr/lib/btrfs-snapshot-po"
+    install -dm755 "$pkgdir/etc/btrfs-snapshot"
 
-    install -Dt "${pkgdir}"/usr/lib/systemd/system -m644 btrfs-snapshot@.{service,timer}
+    install -Dt "$pkgdir/usr/lib/systemd/system" -m644 btrfs-snapshot@.{service,timer}
 
-    install -Dm644 README.md "${pkgdir}"/usr/share/doc/btrfs-snapshot/README.md
-    install -Dm644 LICENSE "${pkgdir}"/usr/share/licenses/btrfs-snapshot/LICENSE
+    install -Dm644 README.md "$pkgdir/usr/share/doc/btrfs-snapshot/README.md"
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/btrfs-snapshot/LICENSE"
+
+    chmod -Rc u=rwX,go=rX "$pkgdir"
 }
 
 # vim: set ts=4 sw=4 et:

@@ -14,9 +14,9 @@ usage: ${0##*/} [options]
 
   Options:
    -s, --subvolume <subvolume>      Set subvolume for creating snapshot (default: /)
-   -r, --readonly                   Create a readonly snapshot (default: no)
    -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
    -p, --prefix <prefix>            Set prefix of snapshot dir (default: /snapshot)
+   -w, --writable                   Create a writable snapshot (default: no)
    -h, --help                       Display this message and exit
    -V, --version                    Display version information and exit
 
@@ -29,10 +29,9 @@ btrfs-snapshot $version
 EOF
 }
 
-set_var() {
+set_default() {
     prefix=/snapshot
     subvol=/
-    _date=$(date -I)
 }
 
 set_and_check_snap() {
@@ -42,6 +41,8 @@ set_and_check_snap() {
         dest=$prefix$subvol
     fi
     mkdir -p "$dest"
+    local _date
+    _date=$(date -I)
     snapshot=$dest/$_date
     if [[ -d $snapshot ]]; then
         echo "${0##*/}: invalid command -- snapshot already exists"
@@ -50,10 +51,10 @@ set_and_check_snap() {
 }
 
 create_snap() {
-    if [[ $ro = true ]]; then
-        btrfs subvolume snapshot -r "$subvol" "$snapshot"
-    else
+    if [[ $rw = true ]]; then
         btrfs subvolume snapshot "$subvol" "$snapshot"
+    else
+        btrfs subvolume snapshot -r "$subvol" "$snapshot"
     fi
 }
 
@@ -71,23 +72,20 @@ delete_snap() {
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-_opt_short='s:rn:p:hV'
-_opt_long=('subvolume:' 'readonly' 'nkeep:' 'prefix:' 'help' 'version')
+_opt_short='s:n:p:whV'
+_opt_long=('subvolume:' 'nkeep:' 'prefix:' 'writable' 'help' 'version')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"
 unset _opt_short _opt_long OPTRET
 
-set_var
+set_default
 
 while :; do
     case $1 in
         -s|--subvolume)
             shift
             subvol=$1
-            ;;
-        -r|--readonly)
-            ro=true
             ;;
         -n|--nkeep)
             shift
@@ -96,6 +94,9 @@ while :; do
         -p|--prefix)
             shift
             prefix=$1
+            ;;
+        -w|--writable)
+            rw=true
             ;;
         -h|--help)
             usage

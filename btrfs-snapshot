@@ -72,7 +72,7 @@ main() {
     check_option
     snapshot
     create
-    [[ $nkeep ]] && delete
+    [[ $nkeep ]] && delete || exit 0
 }
 
 . "$_f_parseopts"

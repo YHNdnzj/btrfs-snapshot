@@ -32,14 +32,16 @@ EOF
 }
 
 check_option() {
+    local -i _code=0
     [[ $subvol ]] || {
         echo "$filename: requires option '-s'"
-        exit 1
+        _code=1
     }
     [[ $dest ]] || {
         echo "$filename: requires option '-d'"
-        exit 1
+        _code=1
     }
+    return $_code
 }
 
 snapshot() {
@@ -69,10 +71,14 @@ delete() {
 }
 
 main() {
-    check_option
-    snapshot
-    create
-    [[ $nkeep ]] && delete || return 0
+    check_option || return
+    snapshot || return
+    create || return
+    if [[ $nkeep ]]; then
+        delete
+    else
+        return 0
+    fi
 }
 
 . "$_f_parseopts"

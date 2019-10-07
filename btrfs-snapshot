@@ -46,7 +46,7 @@ snapshot() {
     mkdir -p "$dest"
     snapshot=$dest/$(date -I)
     [[ ! -d $snapshot ]] || {
-        echo "$filename: invalid command -- snapshot already exists"
+        echo "$filename: snapshot already exists"
         exit 1
     }
 }

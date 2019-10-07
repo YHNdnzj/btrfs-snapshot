@@ -32,11 +32,16 @@ EOF
 }
 
 check_option() {
+    [[ $op_subvol != true ]] || [[ $op_dest != true ]] && {
+        confdir=true
+    }
     [[ $subvol ]] || {
         echo "$filename: requires option '-s'"
+        exit 1
     }
     [[ $dest ]] || {
         echo "$filename: requires option '-d'"
+        exit 1
     }
 }
 
@@ -67,6 +72,7 @@ delete() {
 }
 
 main() {
+    check_option
     snapshot
     create
     [[ $nkeep ]] && delete
@@ -94,6 +100,7 @@ while :; do
         -d|--dest)
             shift
             dest=$1
+            op_dest=true
             ;;
         -h|--help)
             usage
@@ -110,6 +117,7 @@ while :; do
         -s|--subvol)
             shift
             subvol=$1
+            op_subvol=true
             ;;
         -w|--writable)
             writable=true
@@ -121,8 +129,6 @@ while :; do
     esac
     shift
 done
-
-check_option
 
 if [[ $confdir == true ]]; then
     for conf in "$_d_config"/*

@@ -127,7 +127,7 @@ while :; do
     shift
 done
 
-[[ $op_subvol != true ]] || [[ $op_dest != true ]] && {
+[[ $op_subvol != true ]] && [[ $op_dest != true ]] && {
     confdir=true
 }
 

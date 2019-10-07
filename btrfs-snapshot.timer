@@ -1,5 +1,5 @@
 [Unit]
-Description=Daily Btrfs snapshot on %f
+Description=Daily Btrfs snapshot
 
 [Timer]
 OnCalendar=daily

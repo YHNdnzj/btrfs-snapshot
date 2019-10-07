@@ -1,5 +1,5 @@
 [Unit]
-Description=Btrfs snapshot on %f
+Description=Btrfs snapshot
 
 [Service]
 Nice=19

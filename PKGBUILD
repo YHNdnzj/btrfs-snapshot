@@ -1,7 +1,7 @@
 # Maintainer: Mike Yuan <me@yhndnzj.com>
 
 pkgname=btrfs-snapshot-git
-pkgver=3.1.0.r2.gff929ec
+pkgver=3.1.1.r0.g88c0a6c
 pkgrel=1
 pkgdesc="Tool for creating btrfs snapshots"
 arch=('any')
@@ -34,8 +34,8 @@ package() {
     sed "s|\(^_f_parseopts\)=.*|\1=/usr/lib/btrfs-snapshot-po|
          s|\(^_d_config\)=.*|\1=/etc/btrfs-snapshot|
          s|%VERSION%|$pkgver|g" \
-         btrfs-snapshot | install -Dm755 /dev/stdin \
-         "$pkgdir/usr/bin/btrfs-snapshot"
+        btrfs-snapshot | install -Dm755 /dev/stdin \
+        "$pkgdir/usr/bin/btrfs-snapshot"
 
     install -Dm644 parseopts "$pkgdir/usr/lib/btrfs-snapshot-po"
     install -dm755 "$pkgdir/etc/btrfs-snapshot"

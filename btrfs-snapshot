@@ -32,9 +32,6 @@ EOF
 }
 
 check_option() {
-    [[ $op_subvol != true ]] || [[ $op_dest != true ]] && {
-        confdir=true
-    }
     [[ $subvol ]] || {
         echo "$filename: requires option '-s'"
         exit 1
@@ -129,6 +126,10 @@ while :; do
     esac
     shift
 done
+
+[[ $op_subvol != true ]] || [[ $op_dest != true ]] && {
+    confdir=true
+}
 
 if [[ $confdir == true ]]; then
     for conf in "$_d_config"/*

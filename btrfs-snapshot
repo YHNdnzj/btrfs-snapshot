@@ -31,17 +31,26 @@ btrfs-snapshot $version
 EOF
 }
 
+check_config() {
+    [[ $subvol ]] || {
+        echo "$filename: requires option '-s'"
+    }
+    [[ $dest ]] || {
+        echo "$filename: requires option '-d'"
+    }
+}
+
 snapshot() {
     mkdir -p "$dest"
     snapshot=$dest/$(date -I)
-    if [[ -d $snapshot ]]; then
+    [[ ! -d $snapshot ]] || {
         echo "$filename: invalid command -- snapshot already exists"
         exit 1
-    fi
+    }
 }
 
 create() {
-    if [[ $rw == true ]]; then
+    if [[ $writable == true ]]; then
         btrfs subvolume snapshot "$subvol" "$snapshot"
     else
         btrfs subvolume snapshot -r "$subvol" "$snapshot"
@@ -60,9 +69,7 @@ delete() {
 main() {
     snapshot
     create
-    if [[ $nkeep ]]; then
-        delete
-    fi
+    [[ $nkeep ]] && delete
 }
 
 . "$_f_parseopts"
@@ -105,7 +112,7 @@ while :; do
             subvol=$1
             ;;
         -w|--writable)
-            rw=true
+            writable=true
             ;;
         --)
             shift

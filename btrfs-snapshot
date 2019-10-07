@@ -47,6 +47,7 @@ snapshot() {
     snapshot=$dest/$(date -I)
     [[ ! -d $snapshot ]] || {
         echo "$filename: snapshot on '$dest' already exists"
+        return 1
     }
 }
 
@@ -71,7 +72,7 @@ main() {
     check_option
     snapshot
     create
-    [[ $nkeep ]] && delete || exit 0
+    [[ $nkeep ]] && delete || return 0
 }
 
 . "$_f_parseopts"

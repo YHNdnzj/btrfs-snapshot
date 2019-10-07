@@ -47,7 +47,6 @@ snapshot() {
     snapshot=$dest/$(date -I)
     [[ ! -d $snapshot ]] || {
         echo "$filename: snapshot on '$dest' already exists"
-        exit 1
     }
 }
 
@@ -95,9 +94,9 @@ while :; do
             break 2
             ;;
         -d|--dest)
+            op_dest=true
             shift
             dest=$1
-            op_dest=true
             ;;
         -h|--help)
             usage
@@ -112,9 +111,9 @@ while :; do
             exit 0
             ;;
         -s|--subvol)
+            op_subvol=true
             shift
             subvol=$1
-            op_subvol=true
             ;;
         -w|--writable)
             writable=true

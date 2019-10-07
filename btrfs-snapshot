@@ -31,7 +31,7 @@ btrfs-snapshot $version
 EOF
 }
 
-check_config() {
+check_option() {
     [[ $subvol ]] || {
         echo "$filename: requires option '-s'"
     }
@@ -121,6 +121,8 @@ while :; do
     esac
     shift
 done
+
+check_option
 
 if [[ $confdir == true ]]; then
     for conf in "$_d_config"/*

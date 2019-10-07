@@ -1,7 +1,7 @@
 # Maintainer: Mike Yuan <me@yhndnzj.com>
 
 pkgname=btrfs-snapshot-git
-pkgver=2.0.0.r13.gd3dd377
+pkgver=3.1.0.r0.g8e317be
 pkgrel=1
 pkgdesc="Tool for creating btrfs snapshots"
 arch=('any')
@@ -19,7 +19,7 @@ source=(
     "README.md"
     "LICENSE"
 )
-sha256sums=('60d498efd4e60031645b6db554b6eb940d3152f8e4f37a7d14bba1097d0a61c1'
+sha256sums=('02bd1b8bf29e42aabf5e390e38b71c7e85f0b685385574c522be123cce7f49d7'
             'd1b60e1ae87db97322594413c157f723b155e0ee600ba194221b6e0455f8bf11'
             '9d5509431316daff56b339c6342a0df4d86ada7d189a296d0402303b5681a48d'
             'c890846321841900b7e406058271ee81497edac1bd3e26b994dcae346c2b0139'

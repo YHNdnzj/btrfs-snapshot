@@ -138,7 +138,7 @@ done
 }
 
 if [[ $confdir == true ]]; then
-    for conf in "$_d_config"/*
+    for conf in "$_d_config"/*.conf
     do
         . "$conf"
         main

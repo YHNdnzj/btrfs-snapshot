@@ -31,24 +31,34 @@ btrfs-snapshot $version
 EOF
 }
 
-check_option() {
+check() {
     local -i _code=0
-    [[ $subvol ]] || {
-        echo "$filename: requires option '-s'"
-        _code=1
-    }
-    [[ $dest ]] || {
-        echo "$filename: requires option '-d'"
-        _code=1
-    }
-    return $_code
+    if [[ $confdir == true ]]; then
+        [[ $subvol ]] || {
+            echo "$filename: requires variable 'subvol'"
+            _code=1
+        }
+        [[ $dest ]] || {
+            echo "$filename: requires variable 'dest'"
+        }
+    else
+        [[ $subvol ]] || {
+            echo "$filename: requires option '-s'"
+            _code=1
+        }
+        [[ $dest ]] || {
+            echo "$filename: requires option '-d'"
+            _code=1
+        }
+    fi
+    [[ $_code == 0 ]] || exit $_code
 }
 
 snapshot() {
     mkdir -p "$dest"
     snapshot=$dest/$(date -I)
     [[ ! -d $snapshot ]] || {
-        echo "$filename: snapshot on '$dest' already exists"
+        echo "$filename: snapshot on \`$dest' already exists"
         return 1
     }
 }
@@ -71,7 +81,7 @@ delete() {
 }
 
 main() {
-    check_option || return
+    check
     snapshot || return
     create || return
     if [[ $nkeep ]]; then

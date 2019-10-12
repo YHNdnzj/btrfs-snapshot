@@ -12,9 +12,17 @@ Tool for creating btrfs snapshots
 
 #### Daily create snapshots
 
-```
-$ systemd-escape -p /path/to/subvolume
-# systemctl enable --now btrfs-snapshot@escaped-path.timer
+##### Configuration example
+
+```bash
+/etc/btrfs-snapshot/root.conf
+
+# vim:set ft=sh
+subvol=/
+dest=/.snapshot/root
+nkeep=10
 ```
 
-It keeps 10 snapshots by default. To change it, [edit](https://wiki.archlinux.org/index.php/Systemd#Editing_provided_units) `btrfs-snapshot@.service` and change `--nkeep` option in `ExecStart=`
+##### Enable systemd timer
+
+`# systemctl enable --now btrfs-snapshot`

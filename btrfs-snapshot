@@ -14,7 +14,7 @@ btrfs-snapshot $version
 usage: $filename [options]
 
   Options:
-   -c, --confdir                    Use config files in $_d_config
+   -c, --confdir                    Use config files in $_d_config (default: yes)
    -d, --dest <path>                Destination for snapshot
    -h, --help                       Display this message and exit
    -n, --nkeep <number>             Limit number of snapshots to keep (default: no)

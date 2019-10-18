@@ -14,12 +14,12 @@ btrfs-snapshot $version
 usage: $filename [options]
 
   Options:
-   -c, --confdir                    Use config files in $_d_config (default: yes)
-   -d, --dest <path>                Destination for snapshot
+   -c, --confdir <dir>              Use alternate config dir (default: /etc/btrfs-snapshot)
+   -d, --dest <dir>                 Destination for snapshot
    -h, --help                       Display this message and exit
    -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
    -V, --version                    Display version information and exit
-   -s, --subvol <mountpoint>        Mountpoint for subvolume
+   -s, --subvol <mountpoint>        Mountpoint or dir of subvolume
    -w, --writable                   Create a writable snapshot (default: no)
 
 EOF
@@ -96,8 +96,8 @@ main() {
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-_opt_short='cd:hn:Vs:w'
-_opt_long=('confdir' 'dest:' 'help' 'nkeep:' 'version' 'subvol:' 'writable')
+_opt_short='c:d:hn:Vs:w'
+_opt_long=('confdir:' 'dest:' 'help' 'nkeep:' 'version' 'subvol:' 'writable')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"
@@ -108,6 +108,7 @@ while :; do
         -c|--confdir)
             confdir=true
             shift
+            _d_config=$1
             break 2
             ;;
         -d|--dest)
@@ -143,8 +144,8 @@ while :; do
     shift
 done
 
-[[ $op_subvol != true ]] && [[ $op_dest != true ]] && {
-    confdir=true
+[[ $op_subvol == true ]] || [[ $op_dest == true ]] && {
+    confdir=false
 }
 
 if [[ $confdir == true ]]; then

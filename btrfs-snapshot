@@ -149,7 +149,7 @@ done
 
 if [[ $confdir == true ]]; then
     [[ -d $_d_config ]] || {
-        echo "$filename: confdir \`$_d_config does not exist"
+        echo "$filename: confdir \`$_d_config' does not exist"
         exit 1
     }
     for conf in "$_d_config"/*.conf

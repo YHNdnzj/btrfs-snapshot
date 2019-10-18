@@ -7,7 +7,9 @@ declare -r filename=${0##*/} version=%VERSION%
 
 _f_parseopts=parseopts
 _d_config=btrfs-snapshot
+
 confdir=true
+writable=false
 
 usage() {
     cat <<EOF
@@ -65,10 +67,10 @@ snapshot() {
 }
 
 create() {
-    if [[ $writable == true ]]; then
-        btrfs subvolume snapshot "$subvol" "$snapshot"
-    else
+    if [[ $writable == false ]]; then
         btrfs subvolume snapshot -r "$subvol" "$snapshot"
+    else
+        btrfs subvolume snapshot "$subvol" "$snapshot"
     fi
 }
 
@@ -109,12 +111,11 @@ while :; do
         -c|--confdir)
             shift
             _d_config=$1
-            break 2
             ;;
         -d|--dest)
-            op_dest=true
             shift
             dest=$1
+            confdir=false
             ;;
         -h|--help)
             usage
@@ -123,15 +124,16 @@ while :; do
         -n|--nkeep)
             shift
             declare -i nkeep=$1
+            confdir=false
             ;;
         -V|--version)
             version
             exit 0
             ;;
         -s|--subvol)
-            op_subvol=true
             shift
             subvol=$1
+            confdir=false
             ;;
         -w|--writable)
             writable=true
@@ -143,10 +145,6 @@ while :; do
     esac
     shift
 done
-
-[[ $op_subvol == true ]] || [[ $op_dest == true ]] && {
-    confdir=false
-}
 
 if [[ $confdir == true ]]; then
     for conf in "$_d_config"/*.conf

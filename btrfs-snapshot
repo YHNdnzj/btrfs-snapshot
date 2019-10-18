@@ -138,6 +138,7 @@ while :; do
             ;;
         -w|--writable)
             writable=true
+            confdir=false
             ;;
         --)
             shift

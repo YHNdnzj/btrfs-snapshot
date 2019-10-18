@@ -157,6 +157,7 @@ if [[ $confdir == true ]]; then
     do
         . "$conf"
         main
+        unset subvol dest nkeep writable
     done
 else
     main

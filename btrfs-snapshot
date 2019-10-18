@@ -37,7 +37,6 @@ EOF
 check() {
     local -i _code=0
     if [[ $confdir == true ]]; then
-
         [[ $subvol ]] || {
             echo "$filename: requires variable 'subvol'"
             _code=1

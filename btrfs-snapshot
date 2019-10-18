@@ -39,7 +39,7 @@ check() {
     if [[ $confdir == true ]]; then
         [[ -d $_d_config ]] || {
             echo "$filename: confdir \`$_d_config does not exist"
-            _code=1
+            exit 1
         }
         [[ $subvol ]] || {
             echo "$filename: requires variable 'subvol'"
@@ -47,6 +47,7 @@ check() {
         }
         [[ $dest ]] || {
             echo "$filename: requires variable 'dest'"
+            _code=1
         }
     else
         [[ $subvol ]] || {

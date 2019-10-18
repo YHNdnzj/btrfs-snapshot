@@ -7,6 +7,7 @@ declare -r filename=${0##*/} version=%VERSION%
 
 _f_parseopts=parseopts
 _d_config=btrfs-snapshot
+confdir=true
 
 usage() {
     cat <<EOF
@@ -106,7 +107,6 @@ unset _opt_short _opt_long OPTRET
 while :; do
     case $1 in
         -c|--confdir)
-            confdir=true
             shift
             _d_config=$1
             break 2

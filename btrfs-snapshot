@@ -37,10 +37,7 @@ EOF
 check() {
     local -i _code=0
     if [[ $confdir == true ]]; then
-        [[ -d $_d_config ]] || {
-            echo "$filename: confdir \`$_d_config does not exist"
-            exit 1
-        }
+
         [[ $subvol ]] || {
             echo "$filename: requires variable 'subvol'"
             _code=1
@@ -152,6 +149,10 @@ while :; do
 done
 
 if [[ $confdir == true ]]; then
+    [[ -d $_d_config ]] || {
+        echo "$filename: confdir \`$_d_config does not exist"
+        exit 1
+    }
     for conf in "$_d_config"/*.conf
     do
         . "$conf"

@@ -31,7 +31,7 @@ btrfs-snapshot $version
 EOF
 }
 
-check() {
+check_config() {
     local -i _code=0
     if [[ $confdir == false ]]; then
         [[ $subvol ]] || {
@@ -55,7 +55,7 @@ check() {
     [[ $_code == 0 ]] || exit $_code
 }
 
-snapshot() {
+check_dest() {
     mkdir -p "$dest"
     snapshot=$dest/$(date -I)
     [[ ! -d $snapshot ]] || {
@@ -82,8 +82,8 @@ delete() {
 }
 
 main() {
-    check
-    snapshot || return
+    check_config
+    check_dest || return
     create || return
     if [[ $nkeep ]]; then
         delete

@@ -8,9 +8,6 @@ declare -r filename=${0##*/} version=%VERSION%
 _f_parseopts=parseopts
 _d_config=btrfs-snapshot
 
-confdir=true
-writable=false
-
 usage() {
     cat <<EOF
 btrfs-snapshot $version
@@ -36,22 +33,22 @@ EOF
 
 check() {
     local -i _code=0
-    if [[ $confdir == true ]]; then
-        [[ $subvol ]] || {
-            echo "$filename: requires variable 'subvol'"
-            _code=1
-        }
-        [[ $dest ]] || {
-            echo "$filename: requires variable 'dest'"
-            _code=1
-        }
-    else
+    if [[ $confdir == false ]]; then
         [[ $subvol ]] || {
             echo "$filename: requires option '-s'"
             _code=1
         }
         [[ $dest ]] || {
             echo "$filename: requires option '-d'"
+            _code=1
+        }
+    else
+        [[ $subvol ]] || {
+            echo "$filename: requires variable 'subvol'"
+            _code=1
+        }
+        [[ $dest ]] || {
+            echo "$filename: requires variable 'dest'"
             _code=1
         }
     fi
@@ -68,10 +65,10 @@ snapshot() {
 }
 
 create() {
-    if [[ $writable == false ]]; then
-        btrfs subvolume snapshot -r "$subvol" "$snapshot"
-    else
+    if [[ $writable == true ]]; then
         btrfs subvolume snapshot "$subvol" "$snapshot"
+    else
+        btrfs subvolume snapshot -r "$subvol" "$snapshot"
     fi
 }
 

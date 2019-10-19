@@ -74,7 +74,7 @@ create() {
 
 delete() {
     local _ndel=$(( $(ls "$dest" | wc -l) - nkeep ))
-    (( _ndel > 0 )) && {
+    (( _ndel <= 0 )) || {
         local _snapshot=()
         mapfile -t _snapshot < <(ls -d "$dest"/* | head -n $_ndel)
         btrfs subvolume delete "${_snapshot[@]}"

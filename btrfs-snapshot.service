@@ -4,4 +4,5 @@ Description=Btrfs snapshot
 [Service]
 Nice=19
 IOSchedulingClass=idle
+KillSignal=SIGINT
 ExecStart=/usr/bin/btrfs-snapshot

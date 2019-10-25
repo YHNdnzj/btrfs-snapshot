@@ -19,7 +19,7 @@ usage: $filename [options]
    -h, --help                       Display this message and exit
    -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
    -V, --version                    Display version information and exit
-   -s, --subvol <mountpoint>        Mountpoint or dir of subvolume
+   -s, --subvol <path>              Path to subvolume
    -w, --writable                   Create a writable snapshot (default: no)
 
 EOF

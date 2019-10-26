@@ -59,7 +59,7 @@ check_dest() {
     mkdir -p "$dest"
     snapshot=$dest/$(date -I)
     [[ ! -d $snapshot ]] || {
-        echo "$filename: snapshot on \`$dest' already exists"
+        echo "$filename: snapshot in \`$dest' already exists"
         return 1
     }
 }
@@ -109,6 +109,7 @@ while :; do
         -c|--confdir)
             shift
             _d_config=$1
+            confdir=true
             ;;
         -d|--dest)
             shift

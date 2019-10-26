@@ -31,13 +31,13 @@ pkgver() {
 }
 
 package() {
-    sed "s|\(^_f_parseopts\)=.*|\1=/usr/lib/btrfs-snapshot-po|
+    sed "s|\(^_f_parseopts\)=.*|\1=/usr/lib/parseopts|
          s|\(^_d_config\)=.*|\1=/etc/btrfs-snapshot|
          s|%VERSION%|$pkgver|g" \
             btrfs-snapshot | install -Dm755 /dev/stdin \
                 "$pkgdir/usr/bin/btrfs-snapshot"
 
-    install -Dm644 parseopts "$pkgdir/usr/lib/btrfs-snapshot-po"
+    install -Dm644 parseopts "$pkgdir/usr/lib/parseopts"
     install -dm755 "$pkgdir/etc/btrfs-snapshot"
 
     install -Dt "$pkgdir/usr/lib/systemd/system" -m644 btrfs-snapshot.{service,timer}

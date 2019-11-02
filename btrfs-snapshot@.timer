@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily Btrfs snapshot for config %i
+
+[Timer]
+OnCalendar=daily
+AccuracySec=12h
+Persistent=true
+
+[Install]
+WantedBy=multi-user.target

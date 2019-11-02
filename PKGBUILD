@@ -14,14 +14,14 @@ conflicts=('btrfs-snapshot')
 source=(
     "btrfs-snapshot"
     "functions"
-    "btrfs-snapshot{,@}.service"
-    "btrfs-snapshot{,@}.timer"
+    btrfs-snapshot{,@}.service
+    btrfs-snapshot{,@}.timer
     "README.md"
     "LICENSE"
 )
 sha256sums=('7018f02656f9645198e6208a2da6ed7bcb18412c5496d75cf35dc952cc7f1a27'
             'd1b60e1ae87db97322594413c157f723b155e0ee600ba194221b6e0455f8bf11'
-            '9b9cd1c11ac69e175091ccd7ce91345fafa549556e4191b46da8ef84e2ebc9eb'
+            '0f9676d25d82201a0408d3dddef90bb10452df20efaf28040eff9d8552aecae6'
             '19e9be25dd5bf5e113e6c84a16eb9bb10609e3110bef2b197012684358d11b7b'
             '81bcec46fed123aa677178fe07c88618192e0af2ee92444edf37cf286861426b'
             '6428f09b75a26e645b85ab8b9b388bcc6662a804016c2dc5782983bb233096a9'

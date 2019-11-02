@@ -5,8 +5,11 @@
 
 declare -r filename=${0##*/} version=%VERSION%
 
-_f_parseopts=parseopts
-_d_config=btrfs-snapshot
+_f_functions=functions
+_d_configs=btrfs-snapshot
+
+_optconfig= _optdest= _optsubvol=
+_optnkeep=0 _optwritable=0
 
 usage() {
     cat <<EOF
@@ -14,7 +17,8 @@ btrfs-snapshot $version
 usage: $filename [options]
 
   Options:
-   -c, --confdir <dir>              Use alternate config dir (default: /etc/btrfs-snapshot)
+   -c, --config <config>            Use specified config file in /etc/btrfs-snapshot
+   -C, --allconfigs                 Process all config files in /etc/btrfs-snapshot (default: yes)
    -d, --dest <dir>                 Destination for snapshot
    -h, --help                       Display this message and exit
    -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
@@ -33,7 +37,7 @@ EOF
 
 check_config() {
     local -i _code=0
-    if [[ $confdir == false ]]; then
+    if [[ $ ]]; then
         [[ $subvol ]] || {
             echo "$filename: requires option '-s'"
             _code=1
@@ -97,8 +101,9 @@ main() {
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-_opt_short='c:d:hn:Vs:w'
-_opt_long=('confdir:' 'dest:' 'help' 'nkeep:' 'version' 'subvol:' 'writable')
+_opt_short='c:Cd:hn:Vs:w'
+_opt_long=('config:' 'allconfigs' 'dest:' 'help'
+          'nkeep:' 'version' 'subvol:' 'writable')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"
@@ -106,15 +111,18 @@ unset _opt_short _opt_long OPTRET
 
 while :; do
     case $1 in
-        -c|--confdir)
+        -c|--config)
             shift
             _d_config=$1
-            confdir=true
+            _optconfig=+=("$1")
+            ;;
+        -C|--allconfigs)
+            _optconfig=("$_d_configs"/*.conf)
+            [[ -e ${_optpreset[0]} ]] || die "No config files found in $_d_presets"
             ;;
         -d|--dest)
             shift
-            dest=$1
-            confdir=false
+            _optdest=$1
             ;;
         -h|--help)
             usage
@@ -122,8 +130,7 @@ while :; do
             ;;
         -n|--nkeep)
             shift
-            declare -i nkeep=$1
-            confdir=false
+            declare -i _optnkeep=$1
             ;;
         -V|--version)
             version
@@ -131,12 +138,10 @@ while :; do
             ;;
         -s|--subvol)
             shift
-            subvol=$1
-            confdir=false
+            _optsubvol=$1
             ;;
         -w|--writable)
-            writable=true
-            confdir=false
+            _optwritable=1
             ;;
         --)
             shift

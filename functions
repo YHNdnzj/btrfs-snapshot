@@ -133,4 +133,61 @@ parseopts() {
     return 0
 }
 
+plain() {
+    local mesg=$1; shift
+    printf "    $_color_bold$mesg$_color_none\n" "$@" >&1
+}
+
+msg() {
+    local mesg=$1; shift
+    printf "$_color_green==>$_color_none $_color_bold$mesg$_color_none\n" "$@" >&1
+}
+
+msg2() {
+    local mesg=$1; shift
+    printf "  $_color_blue->$_color_none $_color_bold$mesg$_color_none\n" "$@" >&1
+}
+
+warning() {
+    local mesg=$1; shift
+    printf "$_color_yellow==> WARNING:$_color_none $_color_bold$mesg$_color_none\n" "$@" >&2
+}
+
+error() {
+    local mesg=$1; shift
+    printf "$_color_red==> ERROR:$_color_none $_color_bold$mesg$_color_none\n" "$@" >&2
+    return 1
+}
+
+die() {
+    error "$@"
+    cleanup 1
+}
+
+map() {
+    local r=0
+    for _ in "${@:2}"; do
+        "$1" "$_" || (( $# > 255 ? r=1 : ++r ))
+    done
+    return $r
+}
+
+try_enable_color() {
+    local colors
+
+    if ! colors=$(tput colors 2>/dev/null); then
+        warning "Failed to enable color. Check your TERM environment variable"
+        return
+    fi
+
+    if (( colors > 0 )) && tput setaf 0 &>/dev/null; then
+        _color_none=$(tput sgr0)
+        _color_bold=$(tput bold)
+        _color_blue=$_color_bold$(tput setaf 4)
+        _color_green=$_color_bold$(tput setaf 2)
+        _color_red=$_color_bold$(tput setaf 1)
+        _color_yellow=$_color_bold$(tput setaf 3)
+    fi
+}
+
 # vim: set ft=sh ts=4 sw=4 et:

@@ -8,8 +8,10 @@ declare -r filename=${0##*/} version=%VERSION%
 _f_functions=functions
 _d_configs=btrfs-snapshot
 
-_optconfig= _optdest= _optsubvol=
+_optdest= _optsubvol=
 _optnkeep=0 _optwritable=0
+_optcolor=1
+_optconfig=()
 
 usage() {
     cat <<EOF
@@ -18,10 +20,11 @@ usage: $filename [options]
 
   Options:
    -c, --config <config>            Use specified config file in /etc/btrfs-snapshot
-   -C, --allconfigs                 Process all config files in /etc/btrfs-snapshot (default: yes)
+   -C, --allconfigs                 Process all config files in /etc/btrfs-snapshot
    -d, --dest <dir>                 Destination for snapshot
    -h, --help                       Display this message and exit
-   -n, --nkeep <number>             Limit number of snapshots to keep (default: no)
+   -n, --nkeep <number>             Number of snapshots to keep, 0 for unlimited (default: 0)
+   -N, --nocolor                    Disable colorized output messages
    -V, --version                    Display version information and exit
    -s, --subvol <path>              Path to subvolume
    -w, --writable                   Create a writable snapshot (default: no)
@@ -36,8 +39,7 @@ EOF
 }
 
 check_config() {
-    local -i _code=0
-    if [[ $ ]]; then
+    if [[ $_optconfig ]]; then
         [[ $subvol ]] || {
             echo "$filename: requires option '-s'"
             _code=1
@@ -56,19 +58,15 @@ check_config() {
             _code=1
         }
     fi
-    [[ $_code == 0 ]] || exit $_code
 }
 
 check_dest() {
     mkdir -p "$dest"
     snapshot=$dest/$(date -I)
-    [[ ! -d $snapshot ]] || {
-        echo "$filename: snapshot in \`$dest' already exists"
-        return 1
-    }
+    [[ ! -d $snapshot ]] || die "Snapshot in \`$dest' already exists"
 }
 
-create() {
+create_snapshot() {
     if [[ $writable == true ]]; then
         btrfs subvolume snapshot "$subvol" "$snapshot"
     else
@@ -76,8 +74,8 @@ create() {
     fi
 }
 
-delete() {
-    local _ndel=$(( $(ls "$dest" | wc -l) - nkeep ))
+delete_snapshot() {
+    local -i _ndel=$(( $(ls "$dest" | wc -l) - nkeep ))
     (( _ndel <= 0 )) || {
         local _snapshot=()
         mapfile -t _snapshot < <(ls -d "$dest"/* | head -n $_ndel)
@@ -85,14 +83,12 @@ delete() {
     }
 }
 
-main() {
+process_config() {
     check_config
-    check_dest || return
-    create || return
-    if [[ $nkeep ]]; then
-        delete
-    else
-        return 0
+    check_dest
+    create_snapshot
+    if [[ $_optnkeep ]]; then
+        delete_snapshot
     fi
 }
 
@@ -113,8 +109,7 @@ while :; do
     case $1 in
         -c|--config)
             shift
-            _d_config=$1
-            _optconfig=+=("$1")
+            _optconfig=+=("$_d_configs"/"$1")
             ;;
         -C|--allconfigs)
             _optconfig=("$_d_configs"/*.conf)
@@ -131,6 +126,9 @@ while :; do
         -n|--nkeep)
             shift
             declare -i _optnkeep=$1
+            ;;
+        -N|--nocolor)
+            _optcolor=0
             ;;
         -V|--version)
             version
@@ -151,19 +149,13 @@ while :; do
     shift
 done
 
-if [[ $confdir == false ]]; then
-    main
-else
-    [[ -d $_d_config ]] || {
-        echo "$filename: confdir \`$_d_config' does not exist"
-        exit 1
-    }
-    for conf in "$_d_config"/*.conf
-    do
-        . "$conf"
-        main
-        unset subvol dest nkeep writable
-    done
+if [[ -t 1 ]] && (( _optcolor )); then
+    try_enable_color
+fi
+
+if (( ${#_optconfig[*]} )); then
+    map process_config "${_optpreset[@]}"
+    exit
 fi
 
 exit

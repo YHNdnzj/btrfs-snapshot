@@ -70,11 +70,11 @@ process_config() (
 
     . "$config" || die "Failed to load config: \`%s'" "$config"
 
-    (( _optcolor )) || config_ctopts+=(-n)
+    (( _optcolor )) || config_ctopts+=(-N)
 
     ret=0
     msg "Creating snapshot from config: $config"
-    config_cmd=("${config_mkopts[@]}")
+    config_cmd=("${config_ctopts[@]}")
 
     if [[ $SUBVOL ]]; then
         config_cmd+=(-s "$SUBVOL")

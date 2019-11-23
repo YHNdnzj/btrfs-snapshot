@@ -55,7 +55,7 @@ delete_snapshot() {
     }
 }
 
-process_config() {
+process_config() (
     local config=$1
     local -a config_ctopts config_cmd
 
@@ -80,14 +80,14 @@ process_config() {
         config_cmd+=(-s "$SUBVOL")
     else
         warning "No subvolume specified. Skipping config \`%s'" "$config"
-        continue
+        exit
     fi
 
     if [[ $DEST ]]; then
         config_cmd+=(-d "$DEST")
     else
         warning "No destination specified. Skipping config \`%s'" "$config"
-        continue
+        exit
     fi
 
     [[ $NKEEP ]] && config_cmd+=(-n "$NKEEP")
@@ -99,7 +99,7 @@ process_config() {
     (( $? )) && ret=1
 
     exit $ret
-}
+)
 
 . "$_f_functions"
 
@@ -118,7 +118,7 @@ while :; do
     case $1 in
         -c|--config)
             shift
-            _optconfig+=("$_d_configs"/"$1")
+            _optconfig+=("$1")
             ;;
         -C|--allconfigs)
             _optconfig=("$_d_configs"/*.conf)

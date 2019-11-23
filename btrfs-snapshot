@@ -106,9 +106,9 @@ process_config() {
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-_opt_short='c:Cd:hn:Vs:w'
-_opt_long=('config:' 'allconfigs' 'dest:' 'help'
-          'nkeep:' 'version' 'subvol:' 'writable')
+_opt_short='c:Cd:hn:NVs:w'
+_opt_long=('config:' 'allconfigs' 'dest:' 'help' 'nkeep:'
+           'nocolor' 'version' 'subvol:' 'writable')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"

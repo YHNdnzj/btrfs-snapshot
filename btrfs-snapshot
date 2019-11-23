@@ -38,58 +38,65 @@ btrfs-snapshot $version
 EOF
 }
 
-check_config() {
-    if [[ $_optconfig ]]; then
-        [[ $subvol ]] || {
-            echo "$filename: requires option '-s'"
-            _code=1
-        }
-        [[ $dest ]] || {
-            echo "$filename: requires option '-d'"
-            _code=1
-        }
-    else
-        [[ $subvol ]] || {
-            echo "$filename: requires variable 'subvol'"
-            _code=1
-        }
-        [[ $dest ]] || {
-            echo "$filename: requires variable 'dest'"
-            _code=1
-        }
-    fi
-}
-
-check_dest() {
-    mkdir -p "$dest"
-    snapshot=$dest/$(date -I)
-    [[ ! -d $snapshot ]] || die "Snapshot in \`$dest' already exists"
-}
-
 create_snapshot() {
-    if [[ $writable == true ]]; then
-        btrfs subvolume snapshot "$subvol" "$snapshot"
+    if (( $_optwritable )); then
+        btrfs subvolume snapshot "$_optsubvol" "$SNAPSHOT"
     else
-        btrfs subvolume snapshot -r "$subvol" "$snapshot"
+        btrfs subvolume snapshot -r "$_optsubvol" "$SNAPSHOT"
     fi
 }
 
 delete_snapshot() {
-    local -i _ndel=$(( $(ls "$dest" | wc -l) - nkeep ))
+    local -i _ndel=$(( $(ls "$_optdest" | wc -l) - _optnkeep ))
     (( _ndel <= 0 )) || {
         local _snapshot=()
-        mapfile -t _snapshot < <(ls -d "$dest"/* | head -n $_ndel)
+        mapfile -t _snapshot < <(ls -d "$_optdest"/* | head -n $_ndel)
         btrfs subvolume delete "${_snapshot[@]}"
     }
 }
 
 process_config() {
-    check_config
-    check_dest
-    create_snapshot
-    if [[ $_optnkeep ]]; then
-        delete_snapshot
+    local config=$1
+    local -a config_ctopts config_cmd
+
+    if (( BTRSNP_PROCESS_PRESET )); then
+        error "You appear to be calling a config from a config. This is a configuration error."
+        exit 1
     fi
+
+    if [[ $config != */* ]]; then
+        printf -v config '%s/%s.conf' "$_d_configs" "$config"
+    fi
+
+    . "$config" || die "Failed to load config: \`%s'" "$config"
+
+    (( _optcolor )) || config_ctopts+=(-n)
+
+    ret=0
+    msg "Creating snapshot from config: $config"
+    config_cmd=("${config_mkopts[@]}")
+
+    if [[ $SUBVOL ]]; then
+        config_cmd+=(-s $SUBVOL)
+    else
+        warning "No subvolume specified. Skipping config \`%s'" "$config"
+        continue
+    fi
+
+    if [[ $DEST ]]; then
+        config_cmd+=(-d $DEST)
+    else
+        warning "No destination specified. Skipping config \`%s'" "$config"
+        continue
+    fi
+
+    [[ $NKEEP ]] && config_cmd+=(-n $NKEEP)
+    
+    (( $WRITEABLE )) && config_cmd+=(-w)
+
+    msg2 "${config_cmd[*]}"
+    BTRSNP_PROCESS_CONFIG=1 "$0" "${config_cmd[@]}"
+    (( $? )) && ret=1
 }
 
 . "$_f_parseopts"
@@ -113,7 +120,7 @@ while :; do
             ;;
         -C|--allconfigs)
             _optconfig=("$_d_configs"/*.conf)
-            [[ -e ${_optpreset[0]} ]] || die "No config files found in $_d_presets"
+            [[ -e ${_optconfig[0]} ]] || die "No config files found in $_d_configs"
             ;;
         -d|--dest)
             shift
@@ -154,8 +161,21 @@ if [[ -t 1 ]] && (( _optcolor )); then
 fi
 
 if (( ${#_optconfig[*]} )); then
-    map process_config "${_optpreset[@]}"
+    map process_config "${_optconfig[@]}"
     exit
+fi
+
+mkdir -p "$_optdest"
+
+SNAPSHOT=$_optdest/$(date -I)
+
+if [[ -d $SNAPSHOT ]]; then
+    die "Snapshot in \`$s' already exists" "$_optdest"
+fi
+
+create_snapshot
+if [[ _optnkeep ]]; then
+    delete_snapshot
 fi
 
 exit

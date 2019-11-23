@@ -167,6 +167,15 @@ if (( ${#_optconfig[*]} )); then
     exit
 fi
 
+if [[ ! $_optsubvol ]]; then
+    die "No subvolume specified."
+fi
+
+if [[ ! $_optdest ]]; then
+    die "No destination specified."
+    exit
+fi
+
 mkdir -p "$_optdest"
 
 SNAPSHOT=$_optdest/$(date -I)

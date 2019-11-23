@@ -156,7 +156,7 @@ error() {
 
 die() {
     error "$@"
-    cleanup 1
+    exit 1
 }
 
 map() {

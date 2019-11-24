@@ -25,4 +25,8 @@ NKEEP=10
 
 ##### Enable systemd timer
 
-`# systemctl enable --now btrfs-snapshot`
+`# systemctl enable --now btrfs-snapshot.timer`
+
+Or
+
+`# systemctl enable --now btrfs-snapshot@root.timer`

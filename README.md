@@ -18,9 +18,9 @@ Tool for creating btrfs snapshots
 /etc/btrfs-snapshot/root.conf
 
 # vim:set ft=sh
-subvol=/
-dest=/.snapshot/root
-nkeep=10
+SUBVOL=/
+DEST=/.snapshot/root
+NKEEP=10
 ```
 
 ##### Enable systemd timer

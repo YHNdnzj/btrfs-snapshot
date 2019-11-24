@@ -40,9 +40,9 @@ EOF
 
 create_snapshot() {
     if (( _optwritable )); then
-        msg2 "$(btrfs subvolume snapshot "$_optsubvol" "$SNAPSHOT")"
+        msg "$(btrfs subvolume snapshot "$_optsubvol" "$SNAPSHOT")"
     else
-        msg2 "$(btrfs subvolume snapshot -r "$_optsubvol" "$SNAPSHOT")"
+        msg "$(btrfs subvolume snapshot -r "$_optsubvol" "$SNAPSHOT")"
     fi
 }
 
@@ -51,7 +51,7 @@ delete_snapshot() {
     if (( _ndel > 0 )); then
         local _snapshot=()
         mapfile -t _snapshot < <(ls -d "$_optdest"/* | head -n $_ndel)
-        msg2 "$(btrfs subvolume delete "${_snapshot[@]}")"
+        msg "$(btrfs subvolume delete "${_snapshot[@]}")"
     fi
 }
 

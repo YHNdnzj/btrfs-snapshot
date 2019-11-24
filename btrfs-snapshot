@@ -48,18 +48,18 @@ create_snapshot() {
 
 delete_snapshot() {
     local -i _ndel=$(( $(ls "$_optdest" | wc -l) - _optnkeep ))
-    (( _ndel <= 0 )) || {
+    if (( _ndel > 0 )); then
         local _snapshot=()
         mapfile -t _snapshot < <(ls -d "$_optdest"/* | head -n $_ndel)
         msg2 "$(btrfs subvolume delete "${_snapshot[@]}")"
-    }
+    fi
 }
 
 process_config() (
     local config=$1
     local -a config_ctopts config_cmd
 
-    if (( BTRSNP_PROCESS_PRESET )); then
+    if (( BTRSNP_PROCESS_CONFIG )); then
         error "You appear to be calling a config from a config. This is a configuration error."
         exit 1
     fi
@@ -173,7 +173,6 @@ fi
 
 if [[ ! $_optdest ]]; then
     die "No destination specified."
-    exit
 fi
 
 mkdir -p "$_optdest"
@@ -185,7 +184,7 @@ if [[ -d $SNAPSHOT ]]; then
 fi
 
 create_snapshot
-if [[ $_optnkeep ]]; then
+if (( _optnkeep > 0 )); then
     delete_snapshot
 fi
 

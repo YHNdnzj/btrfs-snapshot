@@ -60,8 +60,7 @@ process_config() (
     local -a config_ctopts config_cmd
 
     if (( BTRSNP_PROCESS_CONFIG )); then
-        error "You appear to be calling a config from a config. This is a configuration error."
-        exit 1
+        die "You appear to be calling a config from a config. This is a configuration error."
     fi
 
     if [[ $config != */* ]]; then

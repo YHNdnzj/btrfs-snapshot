@@ -89,7 +89,7 @@ process_config() (
         exit
     fi
 
-    (( $NKEEP > 0)) && config_cmd+=(-n "$NKEEP")
+    (( NKEEP > 0 )) && config_cmd+=(-n "$NKEEP")
     
     (( WRITEABLE )) && config_cmd+=(-w)
 

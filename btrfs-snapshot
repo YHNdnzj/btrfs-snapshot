@@ -3,7 +3,7 @@
 # btrfs-snapshot - tool for creating btrfs snapshots
 #
 
-declare -r filename=${0##*/} version=%VERSION%
+declare -r version=%VERSION%
 
 _f_functions=functions
 _d_configs=btrfs-snapshot
@@ -16,7 +16,7 @@ _optconfig=()
 usage() {
     cat <<EOF
 btrfs-snapshot $version
-usage: $filename [options]
+usage: ${0##*/} [options]
 
   Options:
    -c, --config <config>            Use specified config file in /etc/btrfs-snapshot

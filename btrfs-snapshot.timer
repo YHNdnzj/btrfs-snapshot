@@ -1,5 +1,7 @@
 [Unit]
 Description=Daily Btrfs snapshot
+Conflicts=btrfs-snapshot@.timer
+After=btrfs-snapshot@.timer
 
 [Timer]
 OnCalendar=daily

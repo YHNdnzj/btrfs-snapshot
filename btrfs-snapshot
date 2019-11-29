@@ -47,11 +47,11 @@ create_snapshot() {
 }
 
 delete_snapshot() {
-    local -i _ndel=$(( $(ls "$_optdest" | wc -l) - _optnkeep ))
-    if (( _ndel > 0 )); then
-        local _snapshot=()
-        mapfile -t _snapshot < <(ls -d "$_optdest"/* | head -n $_ndel)
-        msg "$(btrfs subvolume delete "${_snapshot[@]}")"
+    local -i NDEL=$(( $(ls "$_optdest" | wc -l) - _optnkeep ))
+    if (( NDEL > 0 )); then
+        local SNAPSHOT_DEL=()
+        mapfile -t SNAPSHOT_DEL < <(ls -d "$_optdest"/* | head -n $NDEL)
+        msg "$(btrfs subvolume delete "${SNAPSHOT_DEL[@]}")"
     fi
 }
 

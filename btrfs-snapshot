@@ -90,7 +90,7 @@ process_config() (
     fi
 
     (( NKEEP > 0 )) && config_cmd+=(-n "$NKEEP")
-    
+
     (( WRITEABLE )) && config_cmd+=(-w)
 
     msg2 "${config_cmd[*]}"

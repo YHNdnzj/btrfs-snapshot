@@ -24,8 +24,8 @@ usage: ${0##*/} [options]
    -s, --subvol <path>              Path to subvolume
    -d, --dest <dir>                 Destination for snapshot
    -n, --nkeep <number>             Number of snapshots to keep, 0 for unlimited (default: 0)
-   -w, --writable                   Create a writable snapshot (default: no)
    -f, --force                      Force recreate when a snapshot already exists
+   -w, --writable                   Create a writable snapshot (default: no)
    -h, --help                       Display this message and exit
    -V, --version                    Display version information and exit
    -N, --nocolor                    Disable colorized output messages
@@ -70,6 +70,7 @@ process_config() (
 
     . "$config" || die "Failed to load config: \`%s'" "$config"
 
+    (( _optforce )) && config_ctopts+=(-f)
     (( _optcolor )) || config_ctopts+=(-N)
 
     msg "Creating snapshot from config: $config"
@@ -106,9 +107,9 @@ process_config() (
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-_opt_short='c:Cs:d:n:whVN'
-_opt_long=('config:' 'allconfigs' 'subvol:' 'dest:'
-           'nkeep:' 'writable' 'help' 'version' 'nocolor')
+_opt_short='c:Cs:d:n:fwhVN'
+_opt_long=('config:' 'allconfigs' 'subvol:' 'dest:' 'nkeep:'
+           'force' 'writable' 'help' 'version' 'nocolor')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"
@@ -135,6 +136,9 @@ while :; do
         -n|--nkeep)
             shift
             _optnkeep=$1
+            ;;
+        -f|--force)
+            _optforce=1
             ;;
         -w|--writable)
             _optwritable=1

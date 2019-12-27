@@ -58,7 +58,7 @@ process_nkeep() {
 
 process_config() (
     local config=$1
-    local -a config_ctopts config_cmd
+    local -a config_opts
 
     if (( BTRSNP_PROCESS_CONFIG )); then
         die "You appear to be calling a config from a config. This is a configuration error."
@@ -70,32 +70,31 @@ process_config() (
 
     . "$config" || die "Failed to load config: \`%s'" "$config"
 
-    (( _optforce )) && config_ctopts+=(-f)
-    (( _optcolor )) || config_ctopts+=(-N)
+    (( _optforce )) && config_opts+=(-f)
+    (( _optcolor )) || config_opts+=(-N)
 
     msg "Creating snapshot from config: $config"
-    config_cmd=("${config_ctopts[@]}")
 
     if [[ $SUBVOL ]]; then
-        config_cmd+=(-s "$SUBVOL")
+        config_opts+=(-s "$SUBVOL")
     else
         warning "No subvolume specified. Skipping config \`%s'" "$config"
         exit
     fi
 
     if [[ $DEST ]]; then
-        config_cmd+=(-d "$DEST")
+        config_opts+=(-d "$DEST")
     else
         warning "No destination specified. Skipping config \`%s'" "$config"
         exit
     fi
 
-    (( NKEEP > 0 )) && config_cmd+=(-n "$NKEEP")
+    (( NKEEP > 0 )) && config_opts+=(-n "$NKEEP")
 
-    (( WRITEABLE )) && config_cmd+=(-w)
+    (( WRITEABLE )) && config_opts+=(-w)
 
     msg2 "${config_cmd[*]}"
-    if BTRSNP_PROCESS_CONFIG=1 "$0" "${config_cmd[@]}"; then
+    if BTRSNP_PROCESS_CONFIG=1 "$0" "${config_opts[@]}"; then
         exit 0
     else
         exit 1

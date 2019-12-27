@@ -21,13 +21,13 @@ usage: ${0##*/} [options]
   Options:
    -c, --config <config>            Use specified config file in /etc/btrfs-snapshot
    -C, --allconfigs                 Process all config files in /etc/btrfs-snapshot
-   -d, --dest <dir>                 Destination for snapshot
-   -h, --help                       Display this message and exit
-   -n, --nkeep <number>             Number of snapshots to keep, 0 for unlimited (default: 0)
-   -N, --nocolor                    Disable colorized output messages
-   -V, --version                    Display version information and exit
    -s, --subvol <path>              Path to subvolume
+   -d, --dest <dir>                 Destination for snapshot
+   -n, --nkeep <number>             Number of snapshots to keep, 0 for unlimited (default: 0)
    -w, --writable                   Create a writable snapshot (default: no)
+   -h, --help                       Display this message and exit
+   -V, --version                    Display version information and exit
+   -N, --nocolor                    Disable colorized output messages
 
 EOF
 }
@@ -49,7 +49,7 @@ create_snapshot() {
 delete_snapshot() {
     local -i NDEL=$(( $(ls "$_optdest" | wc -l) - _optnkeep ))
     if (( NDEL > 0 )); then
-        local SNAPSHOT_DEL=()
+        local -a SNAPSHOT_DEL
         mapfile -t SNAPSHOT_DEL < <(ls -d "$_optdest"/* | head -n $NDEL)
         msg "$(btrfs subvolume delete "${SNAPSHOT_DEL[@]}")"
     fi
@@ -71,7 +71,6 @@ process_config() (
 
     (( _optcolor )) || config_ctopts+=(-N)
 
-    ret=0
     msg "Creating snapshot from config: $config"
     config_cmd=("${config_ctopts[@]}")
 
@@ -94,10 +93,11 @@ process_config() (
     (( WRITEABLE )) && config_cmd+=(-w)
 
     msg2 "${config_cmd[*]}"
-    BTRSNP_PROCESS_CONFIG=1 "$0" "${config_cmd[@]}"
-    (( $? )) && ret=1
-
-    exit $ret
+    if BTRSNP_PROCESS_CONFIG=1 "$0" "${config_cmd[@]}"; then
+        exit 0
+    else
+        exit 1
+    fi
 )
 
 . "$_f_functions"
@@ -105,9 +105,9 @@ process_config() (
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-_opt_short='c:Cd:hn:NVs:w'
-_opt_long=('config:' 'allconfigs' 'dest:' 'help' 'nkeep:'
-           'nocolor' 'version' 'subvol:' 'writable')
+_opt_short='c:Cs:d:n:whVN'
+_opt_long=('config:' 'allconfigs' 'subvol:' 'dest:'
+           'nkeep:' 'writable' 'help' 'version' 'nocolor')
 
 parseopts "$_opt_short" "${_opt_long[@]}" -- "$@" || exit 1
 set -- "${OPTRET[@]}"

@@ -19,7 +19,7 @@ source=(
     "README.md"
     "LICENSE"
 )
-sha256sums=('ba19934d11b16d2d99fedee821e52750137cbbd8c3a295b055d74fe14ef321ee'
+sha256sums=('96e38cbdb891895a3468e43fbcff585c1ad53d6c1f4cbc3eca9e57080d2bb540'
             'd7976f6a48e73adaed19d647863f371aed2918ded5e40e9138ac35c1262b1be2'
             'a9de67e025de0780d0c635a5cc2236163e456f29bf80d0c5001fefda13903617'
             '6c3eba5c5ea5506d6dba5359d1a440bf0bc475b5a80cb78e12066dbf604a35a7'

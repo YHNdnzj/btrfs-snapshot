@@ -8,7 +8,7 @@ declare -r version=%VERSION%
 _f_functions=functions
 _d_configs=btrfs-snapshot
 
-_optdest= _optsubvol=
+_optdest='' _optsubvol=''
 _optnkeep=0 _optwritable=0 _optforce=0
 _optcolor=1
 _optconfig=()
@@ -93,7 +93,7 @@ process_config() (
 
     (( WRITEABLE )) && config_opts+=(-w)
 
-    msg2 "${config_cmd[*]}"
+    msg2 "${config_opts[*]}"
     if BTRSNP_PROCESS_CONFIG=1 "$0" "${config_opts[@]}"; then
         exit 0
     else

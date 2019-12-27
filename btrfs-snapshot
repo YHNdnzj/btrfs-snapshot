@@ -9,7 +9,7 @@ _f_functions=functions
 _d_configs=btrfs-snapshot
 
 _optdest= _optsubvol=
-_optnkeep=0 _optwritable=0
+_optnkeep=0 _optwritable=0 _optforce=0
 _optcolor=1
 _optconfig=()
 
@@ -25,6 +25,7 @@ usage: ${0##*/} [options]
    -d, --dest <dir>                 Destination for snapshot
    -n, --nkeep <number>             Number of snapshots to keep, 0 for unlimited (default: 0)
    -w, --writable                   Create a writable snapshot (default: no)
+   -f, --force                      Force recreate when a snapshot already exists
    -h, --help                       Display this message and exit
    -V, --version                    Display version information and exit
    -N, --nocolor                    Disable colorized output messages
@@ -46,7 +47,7 @@ create_snapshot() {
     fi
 }
 
-delete_snapshot() {
+process_nkeep() {
     local -i NDEL=$(( $(ls "$_optdest" | wc -l) - _optnkeep ))
     if (( NDEL > 0 )); then
         local -a SNAPSHOT_DEL
@@ -179,12 +180,16 @@ mkdir -p "$_optdest"
 SNAPSHOT=$_optdest/$(date -I)
 
 if [[ -d $SNAPSHOT ]]; then
-    die "Snapshot in \`%s' already exists" "$_optdest"
+    if (( _optforce )); then
+        msg "$(btrfs subvolume delete "$SNAPSHOT")"
+    else
+        die "Snapshot in \`%s' already exists" "$_optdest"
+    fi
 fi
 
 create_snapshot
 if (( _optnkeep > 0 )); then
-    delete_snapshot
+    process_nkeep
 fi
 
 exit

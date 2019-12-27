@@ -123,31 +123,31 @@ while :; do
             _optconfig=("$_d_configs"/*.conf)
             [[ -e ${_optconfig[0]} ]] || die "No config files found in $_d_configs"
             ;;
+        -s|--subvol)
+            shift
+            _optsubvol=$1
+            ;;
         -d|--dest)
             shift
             _optdest=$1
-            ;;
-        -h|--help)
-            usage
-            exit 0
             ;;
         -n|--nkeep)
             shift
             _optnkeep=$1
             ;;
-        -N|--nocolor)
-            _optcolor=0
+        -w|--writable)
+            _optwritable=1
+            ;;
+        -h|--help)
+            usage
+            exit 0
             ;;
         -V|--version)
             version
             exit 0
             ;;
-        -s|--subvol)
-            shift
-            _optsubvol=$1
-            ;;
-        -w|--writable)
-            _optwritable=1
+        -N|--nocolor)
+            _optcolor=0
             ;;
         --)
             shift

@@ -8,8 +8,8 @@ declare -r version=%VERSION%
 _f_functions=functions
 _d_configs=btrfs-snapshot
 
-_optdest='' _optsubvol=''
-_optnkeep=0 _optwritable=0 _optforce=0
+_optsubvol='' _optdest=''
+_optnkeep=0 _optforce=0 _optwritable=0
 _optcolor=1
 _optconfig=()
 

@@ -1,7 +1,5 @@
 [Unit]
 Description=Btrfs snapshot for config %i
-Conflicts=btrfs-snapshot.service
-After=btrfs-snapshot.service
 
 [Service]
 Nice=19

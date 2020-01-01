@@ -32,14 +32,12 @@ pkgver() {
     git describe --long | sed -r 's/([^-]*-g)/r\1/;s/-/./g'
 }
 
-prepare() {
+package() {
     sed -e 's|\(^_f_functions\)=.*|\1=/usr/lib/btrfs-snapshot/functions|' \
         -e 's|\(^_d_configs\)=.*|\1=/etc/btrfs-snapshot|' \
         -e "s|%VERSION%|$pkgver|g" \
         -i btrfs-snapshot
-}
 
-package() {
     install -Dm755 btrfs-snapshot "$pkgdir/usr/bin/btrfs-snapshot"
 
     install -Dm644 functions "$pkgdir/usr/lib/btrfs-snapshot/functions"

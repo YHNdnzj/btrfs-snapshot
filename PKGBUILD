@@ -32,7 +32,7 @@ pkgver() {
 }
 
 package() {
-    depends=('bash' 'btrfs-progs')
+    depends=('btrfs-progs' 'coreutils')
 
     sed -e 's|\(^_f_functions\)=.*|\1=/usr/lib/btrfs-snapshot/functions|' \
         -e 's|\(^_d_configs\)=.*|\1=/etc/btrfs-snapshot|' \

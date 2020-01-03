@@ -7,6 +7,7 @@ pkgdesc="Tool for creating btrfs snapshots"
 arch=('any')
 url="https://github.com/YHNdnzj/btrfs-snapshot"
 license=('MIT')
+optdepends=('systemd: scheduled snapshot creation')
 makedepends=('git')
 provides=('btrfs-snapshot')
 conflicts=('btrfs-snapshot')

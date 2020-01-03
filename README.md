@@ -10,7 +10,7 @@ Tool for creating btrfs snapshots
 
 `# btrfs-snapshot --help`
 
-#### Daily create snapshots
+#### Scheduled snapshot creation
 
 ##### Configuration example
 
@@ -30,3 +30,5 @@ NKEEP=10
 Or
 
 `# systemctl enable --now btrfs-snapshot@root.timer`
+
+*OnCalendar* is set to *daily* by default. [Edit](https://wiki.archlinux.org/index.php/Systemd#Editing_provided_units) the corresponding systemd timer if necessary.

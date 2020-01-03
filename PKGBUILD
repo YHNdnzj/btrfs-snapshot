@@ -7,7 +7,6 @@ pkgdesc="Tool for creating btrfs snapshots"
 arch=('any')
 url="https://github.com/YHNdnzj/btrfs-snapshot"
 license=('MIT')
-depends=('bash' 'btrfs-progs')
 makedepends=('git')
 provides=('btrfs-snapshot')
 conflicts=('btrfs-snapshot')
@@ -33,6 +32,8 @@ pkgver() {
 }
 
 package() {
+    depends=('bash' 'btrfs-progs')
+
     sed -e 's|\(^_f_functions\)=.*|\1=/usr/lib/btrfs-snapshot/functions|' \
         -e 's|\(^_d_configs\)=.*|\1=/etc/btrfs-snapshot|' \
         -e "s|%VERSION%|$pkgver|g" \

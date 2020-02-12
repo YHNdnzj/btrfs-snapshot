@@ -14,8 +14,7 @@ conflicts=('btrfs-snapshot')
 source=(
     "btrfs-snapshot"
     "functions"
-    btrfs-snapshot{,@}.service
-    btrfs-snapshot{,@}.timer
+    "btrfs-snapshot"{,@}.{service,timer}
     "README.md"
     "LICENSE"
 )

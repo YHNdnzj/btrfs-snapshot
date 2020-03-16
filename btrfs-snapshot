@@ -48,10 +48,10 @@ create_snapshot() {
 }
 
 process_nkeep() {
-    local -i NDEL=$(( $(ls "$_optdest" | wc -l) - _optnkeep ))
+    local -i NDEL=$(( $(find "$_optdest"/* -maxdepth 0 -type d | wc -l) - _optnkeep ))
     if (( NDEL > 0 )); then
         local -a SNAPSHOT_DEL
-        mapfile -t SNAPSHOT_DEL < <(ls -d "$_optdest"/* | head -n $NDEL)
+        mapfile -t SNAPSHOT_DEL < <(find "$_optdest"/* -maxdepth 0 -type d | head -n $NDEL)
         msg "$(btrfs subvolume delete "${SNAPSHOT_DEL[@]}")"
     fi
 }

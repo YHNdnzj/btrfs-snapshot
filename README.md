@@ -17,7 +17,7 @@ Tool for creating btrfs snapshots
 ```bash
 /etc/btrfs-snapshot/root.conf
 
-# vim:set ft=sh
+# vim: set ft=sh:
 SUBVOL=/
 DEST=/.snapshot/root
 NKEEP=10

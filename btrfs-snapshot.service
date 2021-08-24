@@ -1,8 +1,9 @@
 [Unit]
 Description=Btrfs snapshot
+Documentation=https://github.com/YHNdnzj/btrfs-snapshot
 
 [Service]
-Nice=19
-IOSchedulingClass=idle
-KillSignal=SIGINT
 ExecStart=/usr/bin/btrfs-snapshot -C
+
+[Install]
+WantedBy=multi-user.target

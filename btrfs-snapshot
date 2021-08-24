@@ -47,14 +47,18 @@ create_snapshot() {
     fi
 }
 
-process_nkeep() {
-    local -i NDEL=$(( $(find "$_optdest"/* -maxdepth 0 -type d | wc -l) - _optnkeep ))
+process_nkeep() (
+    set -e
+    local optdest=$1 optnkeep=$2
+    cd "$optdest"
+    LC_ALL=C SNAPSHOTS=(*)
+    local -i NDEL=$(( ${#SNAPSHOTS[@]} - optnkeep ))
     if (( NDEL > 0 )); then
         local -a SNAPSHOT_DEL
-        mapfile -t SNAPSHOT_DEL < <(find "$_optdest"/* -maxdepth 0 -type d | head -n $NDEL)
+        mapfile -t SNAPSHOT_DEL <<< "${SNAPSHOTS[@]: -$NDEL}"
         msg "$(btrfs subvolume delete "${SNAPSHOT_DEL[@]}")"
     fi
-}
+)
 
 process_config() (
     local config=$1
@@ -90,7 +94,6 @@ process_config() (
     fi
 
     (( NKEEP > 0 )) && config_opts+=(-n "$NKEEP")
-
     (( WRITEABLE )) && config_opts+=(-w)
 
     msg2 "${config_opts[*]}"
@@ -122,7 +125,7 @@ while :; do
             ;;
         -C|--allconfigs)
             _optconfig=("$_d_configs"/*.conf)
-            [[ -e ${_optconfig[0]} ]] || die "No config files found in $_d_configs"
+            [[ -f ${_optconfig[0]} ]] || die "No config files found in $_d_configs"
             ;;
         -s|--subvol)
             shift
@@ -180,7 +183,7 @@ fi
 
 mkdir -p "$_optdest"
 
-SNAPSHOT=$_optdest/$(date -I)
+SNAPSHOT=$_optdest/$(date -Iminutes)
 
 if [[ -d $SNAPSHOT ]]; then
     if (( _optforce )); then
@@ -192,7 +195,7 @@ fi
 
 create_snapshot
 if (( _optnkeep > 0 )); then
-    process_nkeep
+    process_nkeep "$_optdest" "$_optnkeep"
 fi
 
 exit

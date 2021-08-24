@@ -55,7 +55,7 @@ process_nkeep() (
     local -i NDEL=$(( ${#SNAPSHOTS[@]} - optnkeep ))
     if (( NDEL > 0 )); then
         local -a SNAPSHOT_DEL
-        mapfile -t SNAPSHOT_DEL <<< "${SNAPSHOTS[@]: -$NDEL}"
+        mapfile -t SNAPSHOT_DEL <<< "${SNAPSHOTS[@]:0:$NDEL}"
         msg "$(btrfs subvolume delete "${SNAPSHOT_DEL[@]}")"
     fi
 )

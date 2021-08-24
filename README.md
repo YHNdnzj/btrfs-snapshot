@@ -4,7 +4,7 @@ Tool for creating btrfs snapshots
 
 ### Installation
 
-`$ aur_helper -S btrfs-snapshot`
+`$ ${aur_helper} -S btrfs-snapshot`
 
 ### Usage
 

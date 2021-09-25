@@ -1,5 +1,5 @@
 #!/bin/bash
-# adapted from https://github.com/archlinux/mkinitcpio/blob/master/functions
+# modified from archlinux/mkinitcpio/functions
 
 parseopts() {
     local opt= optarg= i= shortopts=$1

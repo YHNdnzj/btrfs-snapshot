@@ -47,6 +47,10 @@ create_snapshot() {
     fi
 }
 
+delete_snapshot() {
+    msg "$(btrfs subvolume delete "$@")"
+}
+
 process_nkeep() (
     set -e
     local optdest=$1 optnkeep=$2
@@ -54,9 +58,7 @@ process_nkeep() (
     LC_ALL=C SNAPSHOTS=(*)
     local -i NDEL=$(( ${#SNAPSHOTS[@]} - optnkeep ))
     if (( NDEL > 0 )); then
-        local -a SNAPSHOT_DEL
-        mapfile -t SNAPSHOT_DEL <<< "${SNAPSHOTS[@]:0:$NDEL}"
-        msg "$(btrfs subvolume delete "${SNAPSHOT_DEL[@]}")"
+        map delete_snapshot "${SNAPSHOTS[@]:0:$NDEL}"
     fi
 )
 

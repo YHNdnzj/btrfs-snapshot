@@ -4,7 +4,7 @@ Tool for creating btrfs snapshots
 
 ### Installation
 
-`$ ${aur_helper} -S btrfs-snapshot`
+`$ aur_helper -S btrfs-snapshot`
 
 ### Usage
 
@@ -17,7 +17,7 @@ Tool for creating btrfs snapshots
 ```bash
 /etc/btrfs-snapshot/root.conf
 
-# vim: set ft=sh:
+#!/hint/bash
 SUBVOL=/
 DEST=/.snapshot/root
 NKEEP=10
